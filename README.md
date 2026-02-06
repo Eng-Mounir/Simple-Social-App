@@ -29,28 +29,6 @@ React Hooks
 Tailwind CSS
 
 HeroUI
-
-📦 Installation & Setup
-
-Clone the repository:
-
-git clone https://github.com/your-username/your-repo-name.git
-
-
-Navigate to the project directory:
-
-cd your-repo-name
-
-
-Install dependencies:
-
-npm install
-
-
-Start the development server:
-
-npm run dev
-
 📁 Project Purpose
 
 This project is intended for learning and practicing:
