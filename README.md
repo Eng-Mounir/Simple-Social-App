@@ -1,56 +1,50 @@
-Simple Social App
+# Vite & HeroUI Template
 
-A simple social media application built with React, focusing on modern frontend practices such as React Hooks, client-side routing, and reusable UI components. The project uses Tailwind CSS and HeroUI to deliver a clean, responsive, and modern user interface.
+This is a template for creating applications using Vite and HeroUI (v2).
 
-🚀 Features
+[Try it on CodeSandbox](https://githubbox.com/heroui-inc/vite-template)
 
-Built entirely with React
+## Technologies Used
 
-Uses React Hooks for state and logic management
+- [Vite](https://vitejs.dev/guide/)
+- [HeroUI](https://heroui.com)
+- [Tailwind CSS](https://tailwindcss.com)
+- [Tailwind Variants](https://tailwind-variants.org)
+- [TypeScript](https://www.typescriptlang.org)
+- [Framer Motion](https://www.framer.com/motion)
 
-React Router for smooth client-side navigation
+## How to Use
 
-Modern UI styled with Tailwind CSS
+To clone the project, run the following command:
 
-UI components powered by HeroUI
+```bash
+git clone https://github.com/heroui-inc/vite-template.git
+```
 
-Responsive and clean layout
+### Install dependencies
 
-Component-based architecture
+You can use one of them `npm`, `yarn`, `pnpm`, `bun`, Example using `npm`:
 
-🛠️ Tech Stack
+```bash
+npm install
+```
 
-React
+### Run the development server
 
-React Router
+```bash
+npm run dev
+```
 
-React Hooks
+### Setup pnpm (optional)
 
-Tailwind CSS
+If you are using `pnpm`, you need to add the following code to your `.npmrc` file:
 
-HeroUI
-📁 Project Purpose
+```bash
+public-hoist-pattern[]=*@heroui/*
+```
 
-This project is intended for learning and practicing:
+After modifying the `.npmrc` file, you need to run `pnpm install` again to ensure that the dependencies are installed correctly.
 
-React fundamentals
+## License
 
-Hooks-based state management
-
-Routing in single-page applications
-
-Modern UI styling with Tailwind CSS
-
-📌 Future Improvements
-
-Authentication system
-
-Backend integration
-
-Real-time interactions
-
-User profiles and posts
-
-📄 License
-
-This project is open-source and available for learning and personal use.
+Licensed under the [MIT license](https://github.com/heroui-inc/vite-template/blob/main/LICENSE).
