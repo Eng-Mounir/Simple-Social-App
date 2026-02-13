@@ -9,14 +9,39 @@ export default function Registration() {
     { key: "male", label: "Male" },
     { key: "female", label: "Female" },
   ];
-  const {register} = useForm();
+  const {register,handleSubmit, formState: {errors}} = useForm({
+  defaultValues: {
+    name: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
+    birthdate: "",
+    gender: "",
+  }
+});
+  const onSubmit = (data) => {
+  console.log(data);
+};
+
   return (
     <main className="p-8 max-w-md mx-auto">
       <h1 className="text-4xl font-bold mb-2">Welcome to Nextify</h1>
       <p className="text-lg font-medium mb-6">Sign Up to Join Our Community</p>
 
-      <form className="space-y-5 w-full">
-        <Input {...register("name")} label="Name" type="text"/>
+      <form className="space-y-5 w-full" onSubmit={handleSubmit(onSubmit)}>
+        <Input {...register("name",{
+          required: "Name is required",
+          minLength: {
+            value: 3,
+            message: "Name must be at least 3 characters"
+          },
+          maxLength: {
+            value: 50,
+            message: "Name must be less than 50 characters"
+          }
+        })} label="Name" type="text" 
+        errorMessage={errors.name?.message} isInvalid={Boolean(errors.name)}
+        />
         <Input {...register("email")} label="Email" type="email" defaultValue="example@gmail.com" description="We'll never share your email with anyone else."
         />
         <Input {...register("password")} label="Password" type="password" />
