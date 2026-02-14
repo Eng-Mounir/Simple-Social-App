@@ -11,7 +11,7 @@ export const registrationSchema = z.object({
     const age = today.getFullYear() - birth.getFullYear();
     return age >= 18;
   }, { message: "You must be at least 18 years old" }),
-  gender: z.string().nonempty("Gender is required")
+  gender: z.string().nonempty("Gender is required").transform((gender)=> {gender === "m"? "male" : "female"})
 })
 .refine((data) => data.password === data.confirmPassword, {
   message: "Passwords do not match",

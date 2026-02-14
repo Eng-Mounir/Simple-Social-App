@@ -1,17 +1,24 @@
 import React from "react";
 import { Input, Select, SelectItem } from "@heroui/react";
-import { Link } from "react-router-dom";
+import { Link,useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { registrationSchema } from "../../../lib/schema/authSchema";
-
+import { IoEye, IoEyeOff } from "react-icons/io5";
+import { registerUser } from "../../../services/authServices";
 export default function Registration() {
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
   const gender = [
     { key: "male", label: "Male" },
     { key: "female", label: "Female" },
   ];
-  const {register,handleSubmit, formState: {errors}} = useForm({
+ //dh 3ashan a3mlo navigate ly login ba3d ma yregister b success
+  const navigate = useNavigate();
+
+  const {register,handleSubmit, formState: {errors }, reset} = useForm({
     resolver: zodResolver(registrationSchema),
     mode: "all",
   defaultValues: {
@@ -23,9 +30,22 @@ export default function Registration() {
     gender: "",
   }
 });
-  const onSubmit = (data) => {
-  console.log(data);
-};
+
+
+async function onSubmit(objDataUser7taha) {
+  console.log(objDataUser7taha);
+
+  try {
+    const response = await registerUser(objDataUser7taha);
+    console.log("Registration successful:", response);
+    reset(); // better place it here
+    if(response.response.message ==="success"){
+    navigate("/auth/login"); // navigate to login page after successful registration
+    }
+  } catch (error) {
+    console.error("Registration failed:", error);
+  }
+}
 
   return (
     <main className="p-8 max-w-md mx-auto">
@@ -52,18 +72,48 @@ export default function Registration() {
 <Input
   {...register("password")}
   label="Password"
-  type="password"
+  type={showPassword ? "text" : "password"}
   errorMessage={errors.password?.message}
   isInvalid={Boolean(errors.password)}
+  endContent={
+    showPassword ? (
+      <IoEyeOff
+        className="cursor-pointer text-2xl"
+        onClick={() => setShowPassword(false)}
+      />
+    ) : (
+      <IoEye
+        className="cursor-pointer text-2xl"
+        onClick={() => setShowPassword(true)}
+      />
+    )
+  }
 />
+
+
 
 <Input
   {...register("confirmPassword")}
   label="Re-Password"
-  type="password"
+  type={showConfirmPassword ? "text" : "password"}
   errorMessage={errors.confirmPassword?.message}
   isInvalid={Boolean(errors.confirmPassword)}
+  endContent={
+    showConfirmPassword ? (
+      <IoEyeOff
+        className="cursor-pointer text-2xl"
+        onClick={() => setShowConfirmPassword(false)}
+      />
+    ) : (
+      <IoEye
+        className="cursor-pointer text-2xl"
+        onClick={() => setShowConfirmPassword(true)}
+      />
+    )
+  }
 />
+
+
 
         {/* Birthdate & Gender Row */}
         <div className="flex flex-col sm:flex-row gap-4">
@@ -96,3 +146,4 @@ export default function Registration() {
     </main>
   );
 }
+
