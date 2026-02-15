@@ -2,7 +2,7 @@ import React from "react";
 import { Input, Select, SelectItem } from "@heroui/react";
 import { Link,useNavigate } from "react-router-dom";
 import { useState } from "react";
-import { useForm } from "react-hook-form";
+import { useForm,Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { registrationSchema } from "../../../lib/schema/authSchema";
 import { IoEye, IoEyeOff } from "react-icons/io5";
@@ -18,41 +18,45 @@ export default function Registration() {
  //dh 3ashan a3mlo navigate ly login ba3d ma yregister b success
   const navigate = useNavigate();
 
-  const {register,handleSubmit, formState: {errors }, reset} = useForm({
+  const {register,handleSubmit,control, formState: {errors }, reset} = useForm({
     resolver: zodResolver(registrationSchema),
     mode: "all",
   defaultValues: {
-    name: "",
-    email: "",
-    password: "",
-    confirmPassword: "",
-    birthdate: "",
-    gender: "",
-  }
+  name: "",
+  email: "",
+  password: "",
+  rePassword: "",
+  dateOfBirth: "",
+  gender: undefined, 
+}
 });
 
 
 async function onSubmit(objDataUser7taha) {
-  console.log(objDataUser7taha);
+  console.log("Sending:", objDataUser7taha);
 
   try {
     const response = await registerUser(objDataUser7taha);
+
     console.log("Registration successful:", response);
-    reset(); // better place it here
-    if(response.response.message ==="success"){
-    navigate("/auth/login"); // navigate to login page after successful registration
+
+    if (response.data.message === "success") {
+      reset();
+      navigate("/auth/login");
     }
+
   } catch (error) {
-    console.error("Registration failed:", error);
+    console.error("Registration failed:", error.response?.data);
   }
 }
+
 
   return (
     <main className="p-8 max-w-md mx-auto">
       <h1 className="text-4xl font-bold mb-2">Welcome to Nextify</h1>
       <p className="text-lg font-medium mb-6">Sign Up to Join Our Community</p>
 
-      <form className="space-y-5 w-full" onSubmit={handleSubmit(onSubmit)}>
+      <form autoComplete="off" className="space-y-5 w-full" onSubmit={handleSubmit(onSubmit)}>
         <Input
   {...register("name")}
   label="Name"
@@ -93,11 +97,11 @@ async function onSubmit(objDataUser7taha) {
 
 
 <Input
-  {...register("confirmPassword")}
+  {...register("rePassword")}
   label="Re-Password"
   type={showConfirmPassword ? "text" : "password"}
-  errorMessage={errors.confirmPassword?.message}
-  isInvalid={Boolean(errors.confirmPassword)}
+  errorMessage={errors.rePassword?.message}
+  isInvalid={Boolean(errors.rePassword)}
   endContent={
     showConfirmPassword ? (
       <IoEyeOff
@@ -117,14 +121,36 @@ async function onSubmit(objDataUser7taha) {
 
         {/* Birthdate & Gender Row */}
         <div className="flex flex-col sm:flex-row gap-4">
-          <Input {...register("birthdate")} label="BirthDate" type="date" className="flex-1" errorMessage={errors.birthdate?.message}
-  isInvalid={Boolean(errors.birthdate)} />
-          <Select {...register("gender")} label="Gender" className="flex-1" errorMessage={errors.gender?.message}
-  isInvalid={Boolean(errors.gender)}>
-            {gender.map((g) => (
-              <SelectItem key={g.key}>{g.label}</SelectItem>
-            ))}
-          </Select>
+          <Input {...register("dateOfBirth")} label="BirthDate" type="date" className="flex-1" errorMessage={errors.dateOfBirth?.message}
+  isInvalid={Boolean(errors.dateOfBirth)} />
+
+
+  
+<Controller
+  autoComplete="off"
+  name="gender"
+  control={control}
+  defaultValue={undefined}
+  render={({ field }) => (
+    <Select
+      label="Gender"
+      selectedKeys={field.value ? new Set([field.value]) : new Set()}
+      onSelectionChange={(keys) => {
+        const value = Array.from(keys)[0];
+        field.onChange(value);
+      }}
+      className="flex-1"
+      errorMessage={errors.gender?.message}
+      isInvalid={Boolean(errors.gender)}
+    >
+      {gender.map((g) => (
+        <SelectItem key={g.key}>{g.label}</SelectItem>
+      ))}
+    </Select>
+  )}
+/>
+
+
         </div>
 
         {/* Submit button */}
