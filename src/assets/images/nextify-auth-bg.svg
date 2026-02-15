@@ -1,0 +1,159 @@
+<svg width="1200" height="1000" viewBox="0 0 1200 1000" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+    <!-- Gradient Definitions -->
+    <defs>
+        <!-- Main Background Gradient -->
+        <linearGradient id="bgGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" style="stop-color:#667eea;stop-opacity:1" />
+            <stop offset="50%" style="stop-color:#764ba2;stop-opacity:1" />
+            <stop offset="100%" style="stop-color:#f093fb;stop-opacity:1" />
+        </linearGradient>
+        
+        <!-- Accent Gradients -->
+        <linearGradient id="accentGradient1" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" style="stop-color:#f093fb;stop-opacity:0.8" />
+            <stop offset="100%" style="stop-color:#f5576c;stop-opacity:0.8" />
+        </linearGradient>
+        
+        <linearGradient id="accentGradient2" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" style="stop-color:#4facfe;stop-opacity:0.7" />
+            <stop offset="100%" style="stop-color:#00f2fe;stop-opacity:0.7" />
+        </linearGradient>
+        
+        <linearGradient id="accentGradient3" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" style="stop-color:#43e97b;stop-opacity:0.6" />
+            <stop offset="100%" style="stop-color:#38f9d7;stop-opacity:0.6" />
+        </linearGradient>
+        
+        <!-- Radial Gradient for Glow -->
+        <radialGradient id="glowGradient">
+            <stop offset="0%" style="stop-color:#ffffff;stop-opacity:0.3" />
+            <stop offset="100%" style="stop-color:#ffffff;stop-opacity:0" />
+        </radialGradient>
+        
+        <!-- Animations -->
+        <style>
+            @keyframes float1 {
+                0%, 100% { transform: translateY(0px) translateX(0px); }
+                50% { transform: translateY(-20px) translateX(10px); }
+            }
+            @keyframes float2 {
+                0%, 100% { transform: translateY(0px) translateX(0px); }
+                50% { transform: translateY(-30px) translateX(-15px); }
+            }
+            @keyframes float3 {
+                0%, 100% { transform: translateY(0px) translateX(0px); }
+                50% { transform: translateY(-25px) translateX(20px); }
+            }
+            @keyframes pulse {
+                0%, 100% { opacity: 0.6; }
+                50% { opacity: 0.9; }
+            }
+            @keyframes spin {
+                from { transform: rotate(0deg); }
+                to { transform: rotate(360deg); }
+            }
+            .float-1 { animation: float1 6s ease-in-out infinite; }
+            .float-2 { animation: float2 8s ease-in-out infinite; }
+            .float-3 { animation: float3 7s ease-in-out infinite; }
+            .pulse { animation: pulse 3s ease-in-out infinite; }
+            .spin-slow { animation: spin 20s linear infinite; }
+        </style>
+    </defs>
+    
+    <!-- Background -->
+    <rect width="1200" height="1000" fill="url(#bgGradient)"/>
+    
+    <!-- Decorative Circles (Background Layer) -->
+    <g class="pulse">
+        <circle cx="200" cy="150" r="300" fill="url(#glowGradient)" opacity="0.3"/>
+    </g>
+    <g class="pulse" style="animation-delay: 1s;">
+        <circle cx="1000" cy="800" r="250" fill="url(#glowGradient)" opacity="0.3"/>
+    </g>
+    
+    <!-- Abstract Shapes (Floating) -->
+    <g class="float-1">
+        <circle cx="150" cy="200" r="80" fill="url(#accentGradient1)" opacity="0.5"/>
+        <circle cx="180" cy="180" r="40" fill="rgba(255,255,255,0.3)"/>
+    </g>
+    
+    <g class="float-2">
+        <rect x="900" y="100" width="120" height="120" rx="30" fill="url(#accentGradient2)" opacity="0.5" class="spin-slow"/>
+    </g>
+    
+    <g class="float-3">
+        <path d="M 800 700 Q 850 650 900 700 T 1000 700" stroke="url(#accentGradient3)" stroke-width="8" fill="none" opacity="0.6"/>
+        <circle cx="850" cy="680" r="25" fill="rgba(255,255,255,0.4)"/>
+    </g>
+    
+    <!-- Social Media Icons (Stylized) -->
+    <g transform="translate(100, 400)" class="float-1">
+        <!-- Message Bubble -->
+        <g opacity="0.7">
+            <rect x="0" y="0" width="100" height="80" rx="20" fill="rgba(255,255,255,0.2)" stroke="rgba(255,255,255,0.5)" stroke-width="3"/>
+            <polygon points="20,80 30,100 40,80" fill="rgba(255,255,255,0.2)"/>
+            <line x1="20" y1="25" x2="80" y2="25" stroke="rgba(255,255,255,0.6)" stroke-width="4" stroke-linecap="round"/>
+            <line x1="20" y1="45" x2="65" y2="45" stroke="rgba(255,255,255,0.6)" stroke-width="4" stroke-linecap="round"/>
+        </g>
+    </g>
+    
+    <g transform="translate(950, 300)" class="float-2">
+        <!-- Heart/Like Icon -->
+        <g opacity="0.7">
+            <path d="M 50 30 C 50 20 40 10 30 10 C 20 10 15 15 15 25 C 15 15 10 10 0 10 C -10 10 -20 20 -20 30 C -20 50 15 70 15 70 C 15 70 50 50 50 30 Z" 
+                  fill="url(#accentGradient1)" stroke="rgba(255,255,255,0.6)" stroke-width="3" transform="scale(1.5)"/>
+        </g>
+    </g>
+    
+    <g transform="translate(200, 700)" class="float-3">
+        <!-- User Group Icon -->
+        <g opacity="0.6">
+            <circle cx="0" cy="0" r="25" fill="rgba(255,255,255,0.3)" stroke="rgba(255,255,255,0.5)" stroke-width="3"/>
+            <circle cx="50" cy="0" r="25" fill="rgba(255,255,255,0.3)" stroke="rgba(255,255,255,0.5)" stroke-width="3"/>
+            <circle cx="100" cy="0" r="25" fill="rgba(255,255,255,0.3)" stroke="rgba(255,255,255,0.5)" stroke-width="3"/>
+            <path d="M -20 40 Q 0 25 20 40" stroke="rgba(255,255,255,0.5)" stroke-width="3" fill="none"/>
+            <path d="M 30 40 Q 50 25 70 40" stroke="rgba(255,255,255,0.5)" stroke-width="3" fill="none"/>
+            <path d="M 80 40 Q 100 25 120 40" stroke="rgba(255,255,255,0.5)" stroke-width="3" fill="none"/>
+        </g>
+    </g>
+    
+    <g transform="translate(850, 600)" class="float-1">
+        <!-- Notification Bell -->
+        <g opacity="0.7">
+            <path d="M 25 10 Q 25 -5 40 -5 Q 55 -5 55 10 L 55 35 Q 55 50 40 50 Q 25 50 25 35 Z" 
+                  fill="rgba(255,255,255,0.3)" stroke="rgba(255,255,255,0.5)" stroke-width="3"/>
+            <ellipse cx="40" cy="50" rx="20" ry="8" fill="rgba(255,255,255,0.3)"/>
+            <circle cx="60" cy="5" r="8" fill="url(#accentGradient1)"/>
+        </g>
+    </g>
+    
+    <!-- Connection Lines -->
+    <g opacity="0.2">
+        <line x1="150" y1="200" x2="950" y2="300" stroke="rgba(255,255,255,0.5)" stroke-width="2" stroke-dasharray="10,5"/>
+        <line x1="200" y1="700" x2="850" y2="600" stroke="rgba(255,255,255,0.5)" stroke-width="2" stroke-dasharray="10,5"/>
+        <line x1="100" y1="400" x2="200" y2="700" stroke="rgba(255,255,255,0.5)" stroke-width="2" stroke-dasharray="10,5"/>
+    </g>
+    
+    <!-- Decorative Dots -->
+    <g opacity="0.5">
+        <circle cx="300" cy="250" r="8" fill="rgba(255,255,255,0.6)" class="pulse"/>
+        <circle cx="700" cy="450" r="6" fill="rgba(255,255,255,0.6)" class="pulse" style="animation-delay: 0.5s;"/>
+        <circle cx="500" cy="650" r="10" fill="rgba(255,255,255,0.6)" class="pulse" style="animation-delay: 1s;"/>
+        <circle cx="400" cy="150" r="7" fill="rgba(255,255,255,0.6)" class="pulse" style="animation-delay: 1.5s;"/>
+        <circle cx="950" cy="500" r="9" fill="rgba(255,255,255,0.6)" class="pulse" style="animation-delay: 2s;"/>
+    </g>
+    
+    <!-- Central Brand Element -->
+    <g transform="translate(600, 500)">
+        <circle cx="0" cy="0" r="150" fill="url(#glowGradient)" opacity="0.2" class="pulse"/>
+        <circle cx="0" cy="0" r="100" fill="rgba(255,255,255,0.15)" stroke="rgba(255,255,255,0.3)" stroke-width="4"/>
+        <text x="0" y="20" font-family="Arial, sans-serif" font-size="80" font-weight="bold" fill="rgba(255,255,255,0.9)" text-anchor="middle">N</text>
+        <circle cx="0" cy="-80" r="12" fill="url(#accentGradient1)" class="pulse"/>
+        <circle cx="-60" cy="-40" r="10" fill="url(#accentGradient2)" class="pulse" style="animation-delay: 0.8s;"/>
+        <circle cx="60" cy="-40" r="10" fill="url(#accentGradient3)" class="pulse" style="animation-delay: 1.6s;"/>
+    </g>
+    
+    <!-- Bottom Wave Accent -->
+    <path d="M 0 850 Q 300 800 600 850 T 1200 850 L 1200 1000 L 0 1000 Z" 
+          fill="rgba(255,255,255,0.1)"/>
+</svg>
