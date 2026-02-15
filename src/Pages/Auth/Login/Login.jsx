@@ -7,6 +7,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { loginSchema } from "../../../lib/schema/authSchema";
 import { IoEye, IoEyeOff } from "react-icons/io5";
 import { loginUser } from "../../../services/authServices";
+import { toast } from "react-toastify";
 
 export default function Login() {
   const [showPassword, setShowPassword] = useState(false);
@@ -36,16 +37,26 @@ export default function Login() {
       setSuccessMsg("");
       const response = await loginUser(loginData);
       console.log("Login successful:", response.data);
-      setSuccessMsg(response.data.message || "Login successful");
+      // setSuccessMsg(response.data.message || "Login successful");
+      toast.success(response.data.message || "Login successful", {
+        position:"top-center",
+        autoClose: 3000,
+        pauseOnHover: true,
+      });
       if (response.data?.message === "success") {
         reset();
         navigate("/"); // Navigate to home or dashboard
       }
     } catch (error) {
       console.log("Login failed:", error);
-      setErrorMsg(
-        error.response?.data?.error || "An error occurred during login"
-      );
+      // setErrorMsg(
+      //   error.response?.data?.error || "An error occurred during login"
+      // );
+      toast.error(error.response?.data?.error || "An error occurred during login", {
+        position:"bottom-center",
+        autoClose: 3000,
+        pauseOnHover: true,
+      });
     }
   }
 

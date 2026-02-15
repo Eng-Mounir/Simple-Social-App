@@ -207,6 +207,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { registrationSchema } from "../../../lib/schema/authSchema";
 import { IoEye, IoEyeOff } from "react-icons/io5";
 import { registerUser } from "../../../services/authServices";
+import { toast } from "react-toastify";
 
 export default function Registration() {
   const [showPassword, setShowPassword] = useState(false);
@@ -248,16 +249,26 @@ export default function Registration() {
       setSuccessMsg("");
       const response = await registerUser(objDataUser7taha);
       console.log("Registration successful:", response.data);
-      setSuccessMsg(response.data.message || "Registration successful");
+      // setSuccessMsg(response.data.message || "Registration successful");
+      toast.success(response.data.message || "Registration successful", {
+        position:"bottom-center",
+        autoClose: 3000,
+        pauseOnHover: true,
+      });
       if (response.data?.message === "success") {
         reset();
         navigate("/auth/login");
       }
     } catch (error) {
       console.log("Registration failed:", error);
-      setErrorMsg(
-        error.response?.data?.error || "An error occurred during registration"
-      );
+      // setErrorMsg(
+      //   error.response?.data?.error || "An error occurred during registration"
+      // );
+      toast.error(error.response?.data?.error || "An error occurred during registration", {
+        position:"bottom-center",
+        autoClose: 3000,
+        pauseOnHover: true,
+      });
     }
   }
 
