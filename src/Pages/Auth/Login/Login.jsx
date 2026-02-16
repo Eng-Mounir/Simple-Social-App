@@ -43,9 +43,11 @@ export default function Login() {
         autoClose: 3000,
         pauseOnHover: true,
       });
+      console.log("token",response.data.token)
+      localStorage.setItem("token", response.data.token);
       if (response.data?.message === "success") {
-        reset();
-        navigate("/"); // Navigate to home or dashboard
+        // reset();
+         // Navigate to home or dashboard
       }
     } catch (error) {
       console.log("Login failed:", error);

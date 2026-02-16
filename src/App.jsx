@@ -9,12 +9,14 @@ import UserProfile from "./Pages/UserProfile/UserProfile";
 import NotFound from './Pages/NotFound/NotFound';
 import Registration from './Pages/Auth/Registration/Registration';
 import Login from './Pages/Auth/Login/Login';
+import AppProtectedRoute from './components/ProtectedRoutes/AppProtectedRoute';
+import AuthProtectedRoute from './components/ProtectedRoutes/AuthProtectedRoute';
 
 function App() {
   const router = createBrowserRouter([
     {
       path: "/",
-      element: <MainLayout />,
+      element: <AppProtectedRoute><MainLayout /></AppProtectedRoute>  , // Wrap MainLayout with AppProtectedRoute
       children: [
         { index: true, element: <Navigate to="/home" replace /> },
         { path: "home", element: <NewFeed /> },
@@ -23,7 +25,7 @@ function App() {
     },
     {
       path: "/auth",
-      element: <AuthLayout />,
+      element: <AuthProtectedRoute><AuthLayout /></AuthProtectedRoute>, // Wrap AuthLayout with AuthProtectedRoute
       children: [
         { index: true, element: <Navigate to="/auth/login" replace /> },
         { path: "registration", element: <Registration /> },
