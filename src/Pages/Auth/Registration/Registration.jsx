@@ -255,7 +255,8 @@ export default function Registration() {
         autoClose: 3000,
         pauseOnHover: true,
       });
-      if (response.data?.message === "success") {
+      console.log("Response data:", response.data.message); // Log the response data for debugging
+      if (response.data?.message === "account created") {
         reset();
         navigate("/auth/login");
       }

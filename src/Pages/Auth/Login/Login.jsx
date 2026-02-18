@@ -8,11 +8,14 @@ import { loginSchema } from "../../../lib/schema/authSchema";
 import { IoEye, IoEyeOff } from "react-icons/io5";
 import { loginUser } from "../../../services/authServices";
 import { toast } from "react-toastify";
-
+import { useContext } from "react";
+import { AuthContext } from "../../../context/AuthContext";
 export default function Login() {
   const [showPassword, setShowPassword] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
   const [successMsg, setSuccessMsg] = useState("");
+ 
+  const  { setToken } = useContext(AuthContext);
 
   const navigate = useNavigate();
 
@@ -36,18 +39,19 @@ export default function Login() {
       setErrorMsg("");
       setSuccessMsg("");
       const response = await loginUser(loginData);
-      console.log("Login successful:", response.data);
+      console.log("Login successful:", response);
       // setSuccessMsg(response.data.message || "Login successful");
-      toast.success(response.data.message || "Login successful", {
+      toast.success(response.data.message || "signed in successfully", {
         position:"top-center",
         autoClose: 3000,
         pauseOnHover: true,
       });
-      console.log("token",response.data.token)
-      localStorage.setItem("token", response.data.token);
-      if (response.data?.message === "success") {
-        // reset();
-         // Navigate to home or dashboard
+      console.log("token",response.data.data.token)
+      localStorage.setItem("token", response.data.data.token);
+      setToken(response.data.data.token);
+      if (response.data?.message === "signed in successfully") {
+        reset();
+        navigate("/home");
       }
     } catch (error) {
       console.log("Login failed:", error);
