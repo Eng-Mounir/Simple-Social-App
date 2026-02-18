@@ -1,10 +1,10 @@
 import axios from "axios";
-
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 export async function registerUser(userData) {
   try {
     // const response = await axios.post("https://route-posts.routemisr.com/users/signup", userData);
     // return response;
-     return  await axios.post("https://route-posts.routemisr.com/users/signup", userData);
+     return  await axios.post(API_BASE_URL + "/signup", userData);
   } catch (error) {
     throw error.response ? error : new Error("Network error");
   }
@@ -12,7 +12,7 @@ export async function registerUser(userData) {
 
 export async function loginUser(loginData) {
   try {
-    const response = await axios.post("https://route-posts.routemisr.com/users/signin", loginData);
+    const response = await axios.post(API_BASE_URL + "/signin", loginData);
     return response;
   } catch (error) {
     throw error.response ? error : new Error("Network error");

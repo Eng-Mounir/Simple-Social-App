@@ -1,3 +1,4 @@
+import { AuthContext } from "../../context/AuthContext";
 import {
   Navbar ,
   NavbarBrand,
@@ -17,7 +18,9 @@ import { IoIosNotifications } from "react-icons/io";
 import userIcon from "../../assets/images/userIcon.png"
 import {Badge} from "@heroui/react";
 import { LuMessageCircleMore } from "react-icons/lu";
+import { useContext } from "react";
 export default function App() {
+  const { token, logout } = useContext(AuthContext);
   return (
         <Navbar isBordered>
         <NavbarBrand className="mr-4">
@@ -75,10 +78,7 @@ export default function App() {
               <p className="font-semibold">zoey@example.com</p>
             </DropdownItem>
             <DropdownItem key="settings">My Profile</DropdownItem>
-            <DropdownItem key="logout" color="danger" onClick={() => {
-              localStorage.removeItem("token");
-              window.location.href = "/auth/login"; // Redirect to login page after logout
-            }}>
+            <DropdownItem key="logout" color="danger" onClick={logout}>
               Log Out
             </DropdownItem>
           </DropdownMenu>
