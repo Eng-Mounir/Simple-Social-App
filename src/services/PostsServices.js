@@ -9,7 +9,7 @@ export async function getAllPosts() {
         token: localStorage.getItem("token"), // or Authorization: `Bearer ${token}`
       },
     });
-
+    console.log("Posts response:", response); // Debugging log
     return response.data.data.posts; // caller can destructure data
   } catch (error) {
     throw error.response ? error : new Error("Network error");

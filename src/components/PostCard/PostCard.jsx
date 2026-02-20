@@ -7,35 +7,37 @@ import {
   AiOutlineEllipsis,
 } from "react-icons/ai";
 import { BiRepost } from "react-icons/bi";
-
+import defaultImage from "../../assets/images/defaultImage.jpg";
 export default function PostCard({ post }) {
-  const user = post.user;
-  const topComment = post.topComment;
+  if (!post) return null; // Defensive: in case post is undefined
+
+  const { user, topComment, createdAt, body, image, likesCount, sharesCount, commentsCount, privacy } = post;
 
   return (
     <article className="overflow-visible rounded-xl border border-slate-200 bg-white shadow-sm mb-4">
+      
       {/* Header */}
       <div className="p-4">
         <div className="flex items-center gap-3">
           <img
-            src={user.photo}
-            alt={user.name}
+            src={user?.photo || defaultImage}
+            alt={user?.name || "Unknown User"}
             className="h-11 w-11 rounded-full object-cover"
           />
 
           <div className="min-w-0 flex-1">
             <p className="truncate text-sm font-bold text-foreground hover:underline">
-              {user.name}
+              {user?.name || "Unknown User"}
             </p>
 
             <div className="flex items-center gap-1 text-xs text-muted-foreground">
-              <span>@{user.username}</span>
+              <span>@{user?.username || "unknown"}</span>
               <span>·</span>
-              <span>{new Date(post.createdAt).toLocaleTimeString()}</span>
+              <span>{createdAt ? new Date(createdAt).toLocaleTimeString() : "Unknown time"}</span>
               <span>·</span>
               <span className="inline-flex items-center gap-1">
                 <AiOutlineGlobal size={12} />
-                Public
+                {privacy || "Public"}
               </span>
             </div>
           </div>
@@ -48,11 +50,12 @@ export default function PostCard({ post }) {
         {/* Post Body */}
         <div className="mt-3">
           <p className="whitespace-pre-wrap text-sm leading-relaxed text-foreground">
-            {post.body}
+            {body}
           </p>
-          {post.image && (
+
+          {image && (
             <img
-              src={post.image}
+              src={image || defaultImage}
               alt="post"
               className="mt-2 w-full max-h-[400px] object-cover rounded-md"
             />
@@ -67,15 +70,17 @@ export default function PostCard({ post }) {
             <span className="inline-flex h-5 w-5 items-center justify-center rounded-full bg-[#1877f2] text-white">
               <AiOutlineLike size={12} />
             </span>
-            <span className="font-semibold">{post.likesCount} likes</span>
+            <span className="font-semibold">{likesCount || 0} likes</span>
           </div>
 
           <div className="flex items-center gap-3 text-xs sm:text-sm">
             <span className="inline-flex items-center gap-1">
               <BiRepost size={14} />
-              {post.sharesCount} shares
+              {sharesCount || 0} shares
             </span>
-            <span>{post.commentsCount} comments</span>
+
+            <span>{commentsCount || 0} comments</span>
+
             <button className="rounded-md px-2 py-1 text-xs font-bold text-[#1877f2] hover:bg-[#e7f3ff]">
               View details
             </button>
@@ -112,17 +117,18 @@ export default function PostCard({ post }) {
 
           <div className="flex items-start gap-2">
             <img
-              src={topComment.commentCreator.photo}
-              alt={topComment.commentCreator.name}
+              src={topComment.commentCreator?.photo || "https://via.placeholder.com/150"}
+              alt={topComment.commentCreator?.name || "Unknown"}
               className="h-8 w-8 rounded-full object-cover"
             />
 
             <div className="flex-1 rounded-2xl bg-white px-3 py-2">
               <p className="truncate text-xs font-bold text-slate-900">
-                {topComment.commentCreator.name}
+                {topComment.commentCreator?.name || "Unknown"}
               </p>
+
               <p className="mt-0.5 text-sm text-slate-700">
-                {topComment.content}
+                {topComment.content || ""}
               </p>
             </div>
           </div>
