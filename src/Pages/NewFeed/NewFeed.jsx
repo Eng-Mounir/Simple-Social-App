@@ -5,6 +5,7 @@ import Footer from "../../components/Footer/Footer";
 import RightSideBar from "../../components/RightSideBar/RightSideBar";
 import { getAllPosts } from "../../services/PostsServices";
 import Skeleton from "../../components/Skeleton/Skeleton";
+import PostDetails from "../../components/PostDetails/PostDetails";
 export default function NewFeed() {
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -32,15 +33,9 @@ export default function NewFeed() {
           <div className="col-span-1">
             <SideBar />
           </div>
-
-          <div className="col-span-2">
-            {loading ? (
-              <>
-                <Skeleton />
-                <Skeleton />
-                <Skeleton />
-              </>
-            ) : (
+          <div className="col-span-2 mt-2">
+            <PostDetails />
+            {loading ? (Array(5).fill(null).map((_, index) => <Skeleton key={index} />)) : (
               posts.map((post) => (
                 <PostCard
                   key={post._id}
