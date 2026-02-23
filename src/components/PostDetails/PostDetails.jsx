@@ -13,21 +13,12 @@ import {
 
 export default function PostDetails() {
   const {isOpen, onOpen, onOpenChange} = useDisclosure();
-  const [scrollBehavior, setScrollBehavior] = React.useState("inside");
+
 
   return (
     <div className="flex flex-col gap-2">
       <Button onPress={onOpen}>Open Modal</Button>
-      <RadioGroup
-        label="Select scroll behavior"
-        orientation="horizontal"
-        value={scrollBehavior}
-        onValueChange={setScrollBehavior}
-      >
-        <Radio value="inside">inside</Radio>
-        <Radio value="outside">outside</Radio>
-      </RadioGroup>
-      <Modal isOpen={isOpen} scrollBehavior={scrollBehavior} onOpenChange={onOpenChange}>
+      <Modal isOpen={isOpen} scrollBehavior={"inside"} onOpenChange={onOpenChange}>
         <ModalContent>
           {(onClose) => (
             <>
