@@ -19,6 +19,7 @@ import {
   getPostDetails,
   getPostComments,
 } from "../../services/PostsServices";
+import { createComment } from "../../services/PostsServices";
 
 export default function PostDetails({
   isOpen,
@@ -27,6 +28,8 @@ export default function PostDetails({
 }) {
   const [post, setPost] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [commentText, setCommentText] = useState("");
+  const [addingComment, setAddingComment] = useState(false);
 
   useEffect(() => {
     if (!isOpen || !postId) return;
@@ -113,6 +116,47 @@ export default function PostDetails({
                     <h3 className="font-semibold mb-4">
                       All Comments ({post.comments?.length || 0})
                     </h3>
+
+                    {/* Add Comment Input */}
+                    <div className="mb-4">
+                      <textarea
+                        value={commentText}
+                        onChange={(e) => setCommentText(e.target.value)}
+                        rows={3}
+                        placeholder="Add a comment..."
+                        className="w-full p-3 rounded-xl border resize-none"
+                      />
+
+                      <div className="mt-2 flex justify-end">
+                        <Button
+                          variant="primary"
+                          onPress={async () => {
+                            if (!commentText.trim() || addingComment) return;
+                            try {
+                              setAddingComment(true);
+                              const newComment = await createComment(postId, commentText.trim());
+
+                              // If API returned a comment object, prepend it
+                              setPost((prev) => ({
+                                ...prev,
+                                comments: prev?.comments
+                                  ? [newComment, ...prev.comments]
+                                  : [newComment],
+                              }));
+
+                              setCommentText("");
+                            } catch (err) {
+                              console.error("Failed to add comment:", err);
+                            } finally {
+                              setAddingComment(false);
+                            }
+                          }}
+                          disabled={addingComment || !commentText.trim()}
+                        >
+                          {addingComment ? "Posting..." : "Post Comment"}
+                        </Button>
+                      </div>
+                    </div>
 
                     {/* No Comments */}
                     {post.comments?.length === 0 && (

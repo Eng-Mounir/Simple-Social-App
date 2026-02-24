@@ -126,3 +126,32 @@ export async function getPostLikes(postId, page = 1, limit = 20) {
     throw error.response ? error : new Error("Network error");
   }
 }
+
+export async function createComment(postId, content) {
+  try {
+    const response = await axios.post(
+      `${API_BASE_URL}/posts/${postId}/comments`,
+      { content },
+      {
+        headers: {
+          token: localStorage.getItem("token"),
+        },
+      }
+    );
+
+    // Try to return the created comment in a few possible shapes
+    const payload = response?.data?.data ?? response?.data;
+    if (!payload) return null;
+
+    // If API returns { comment: {...} }
+    if (payload.comment) return payload.comment;
+
+    // If it returns the comment directly
+    if (payload._id) return payload;
+
+    return payload;
+  } catch (error) {
+    console.error("createComment API error:", error);
+    throw error.response ? error : new Error("Network error");
+  }
+}

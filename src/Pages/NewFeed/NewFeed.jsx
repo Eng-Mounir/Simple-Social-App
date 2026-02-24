@@ -6,6 +6,7 @@ import RightSideBar from "../../components/RightSideBar/RightSideBar";
 import { getAllPosts } from "../../services/PostsServices";
 import Skeleton from "../../components/Skeleton/Skeleton";
 import PostDetails from "../../components/PostDetails/PostDetails";
+import CreatePost from "../../components/CreatePost/CreatePost";
 export default function NewFeed() {
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -33,7 +34,8 @@ export default function NewFeed() {
           <div className="col-span-1">
             <SideBar />
           </div>
-          <div className="col-span-2 mt-2">
+          <div className="col-span-2">
+            <CreatePost />
             <PostDetails />
             {loading ? (Array(5).fill(null).map((_, index) => <Skeleton key={index} />)) : (
               posts.map((post) => (
@@ -45,7 +47,7 @@ export default function NewFeed() {
               ))
             )}
           </div>
-
+         
           <div className="col-span-1">
             <RightSideBar />
           </div>
