@@ -18,9 +18,22 @@ import { IoIosNotifications } from "react-icons/io";
 import userIcon from "../../assets/images/userIcon.png"
 import {Badge} from "@heroui/react";
 import { LuMessageCircleMore } from "react-icons/lu";
-import { useContext } from "react";
+import { useContext, useMemo } from "react";
+import { useNavigate } from "react-router-dom";
 export default function App() {
   const { token, logout } = useContext(AuthContext);
+  const navigate = useNavigate();
+  // decode token to get email/username for dropdown
+  const signedInAs = useMemo(() => {
+    try {
+      const t = localStorage.getItem("token") || token;
+      if (!t) return null;
+      const payload = JSON.parse(atob(t.split(".")[1].replace(/-/g, "+").replace(/_/g, "/")));
+      return payload?.email || payload?.username || payload?.userName || null;
+    } catch (e) {
+      return null;
+    }
+  }, [token]);
   return (
         <Navbar isBordered>
         <NavbarBrand className="mr-4">
@@ -75,9 +88,9 @@ export default function App() {
           <DropdownMenu aria-label="Profile Actions" variant="flat">
             <DropdownItem key="profile" className="h-14 gap-2">
               <p className="font-semibold">Signed in as</p>
-              <p className="font-semibold">zoey@example.com</p>
+              <p className="font-semibold">{signedInAs || "user@example.com"}</p>
             </DropdownItem>
-            <DropdownItem key="settings">My Profile</DropdownItem>
+            <DropdownItem key="settings" onClick={() => navigate('/profile')}>My Profile</DropdownItem>
             <DropdownItem key="logout" color="danger" onClick={logout}>
               Log Out
             </DropdownItem>
