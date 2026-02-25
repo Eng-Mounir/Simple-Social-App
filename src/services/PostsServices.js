@@ -33,6 +33,7 @@
 
 
 import axios from "axios";
+import { FaLinux } from "react-icons/fa";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
@@ -152,6 +153,33 @@ export async function createComment(postId, content) {
     return payload;
   } catch (error) {
     console.error("createComment API error:", error);
+    throw error.response ? error : new Error("Network error");
+  }
+}
+
+export async function createPost(formData) {
+  try {
+    const response = await axios.post(
+      `${API_BASE_URL}/posts`,
+      formData,
+      {
+        headers: {
+          token: localStorage.getItem("token"),
+          // Let axios/browser set Content-Type for FormData
+        },
+      }
+    );
+
+    const payload = response?.data?.data ?? response?.data;
+    if (!payload) return null;
+
+    if (payload.post) return payload.post;
+    if (Array.isArray(payload.posts) && payload.posts.length > 0) return payload.posts[0];
+    if (payload._id) return payload;
+
+    return payload;
+  } catch (error) {
+    console.error("createPost API error:", error);
     throw error.response ? error : new Error("Network error");
   }
 }

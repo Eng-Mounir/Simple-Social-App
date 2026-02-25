@@ -10,13 +10,15 @@ import {
 import { IoClose } from "react-icons/io5";
 import React, { useRef, useState } from "react";
 import defaultImageUser from "../../assets/images/deafultPerson2.jpg";
+import { createPost } from "../../services/PostsServices";
 
 export default function CreatePostModal({ isOpen, onOpenChange }) {
   const [postText, setPostText] = useState("");
   const [selectedImage, setSelectedImage] = useState(null);
   const [previewUrl, setPreviewUrl] = useState("");
   const fileInput = useRef();
-
+  const userTextArea = useRef();
+  const [posting, setPosting] = useState(false);
   function openFileInput() {
     fileInput.current?.click();
   }
@@ -45,6 +47,34 @@ export default function CreatePostModal({ isOpen, onOpenChange }) {
       if (previewUrl) URL.revokeObjectURL(previewUrl);
     };
   }, [previewUrl]);
+
+
+  async function createPostData() {
+    const formData = new FormData();
+    if (postText && postText.trim()) {
+      formData.append("body", postText.trim());
+    }
+    if (selectedImage) {
+      formData.append("image", selectedImage);
+    }
+
+    try {
+      setPosting(true);
+      const created = await createPost(formData);
+      // clear UI
+      setPostText("");
+      removeImage();
+      if (typeof onOpenChange === "function") onOpenChange(false);
+      console.log("gamed y mon");
+      return created;
+    } catch (error) {
+      console.error("createPost failed:", error?.response?.data ?? error);
+      try { window.alert("Failed to create post. See console for details."); } catch {}
+      return null;
+    } finally {
+      setPosting(false);
+    }
+  }
   return (
     <Modal
       isOpen={isOpen}
@@ -85,6 +115,7 @@ export default function CreatePostModal({ isOpen, onOpenChange }) {
                 placeholder="What's on your mind?"
                 className="w-full resize-none bg-transparent focus:outline-none text-lg placeholder-gray-400"
                 rows={2}
+                ref={userTextArea}
               />
 
               {/* Image Preview / Picker */}
@@ -140,7 +171,8 @@ export default function CreatePostModal({ isOpen, onOpenChange }) {
                 </button>
 
                 <button
-                  disabled={!postText.trim() && !selectedImage}
+                  onClick={createPostData}
+                  disabled={posting || (!postText.trim() && !selectedImage)}
                   className={`flex-1 py-3 rounded-xl font-semibold flex items-center justify-center gap-2 transition 
                     ${
                       postText.trim() || selectedImage
@@ -148,8 +180,15 @@ export default function CreatePostModal({ isOpen, onOpenChange }) {
                         : "bg-gray-200 text-gray-400 cursor-not-allowed"
                     }`}
                 >
-                  <FaPaperPlane />
-                  <span>Post</span>
+                  {posting ? (
+                    <svg className="w-5 h-5 animate-spin text-white" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z" />
+                    </svg>
+                  ) : (
+                    <FaPaperPlane />
+                  )}
+                  <span>{posting ? "Posting..." : "Post"}</span>
                 </button>
               </div>
             </div>
