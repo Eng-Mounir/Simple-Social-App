@@ -1,6 +1,194 @@
+/* =====================================================
+   1️⃣ GOOGLE FONT (MUST BE FIRST)
+===================================================== */
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap');
+
+/* =====================================================
+   2️⃣ TAILWIND CORE
+===================================================== */
 @import "tailwindcss";
+
+/* =====================================================
+   3️⃣ HEROUI PLUGIN
+===================================================== */
 @plugin '../hero.js';
 
+/* =====================================================
+   4️⃣ HEROUI SOURCE SCAN
+===================================================== */
 @source '../../node_modules/@heroui/theme/dist/**/*.{js,ts,jsx,tsx}';
+
+/* =====================================================
+   5️⃣ CUSTOM DARK VARIANT
+===================================================== */
 @custom-variant dark (&:is(.dark *));
-background-image: url('../assets/images/nextify-auth-bg.svg');
+
+
+/* =====================================================
+   🔽 AFTER THIS LINE → NORMAL CSS IS ALLOWED
+===================================================== */
+
+body {
+  background-image: url('../assets/images/nextify-auth-bg.svg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  font-family: 'Outfit', sans-serif;
+}
+
+
+/* ================= Overlay ================= */
+
+.sm-overlay {
+  font-family: 'Outfit', sans-serif !important;
+}
+
+
+/* ================= Card ================= */
+
+.sm-card {
+  width: 100%;
+  max-width: 420px;
+  background: #0d0d12;
+  border: 1px solid rgba(255,255,255,0.07);
+  border-radius: 24px;
+  overflow: hidden;
+  box-shadow:
+    0 0 0 1px rgba(255,255,255,0.04),
+    0 40px 80px rgba(0,0,0,0.8),
+    0 0 60px rgba(99,102,241,0.06);
+  font-family: 'Outfit', sans-serif;
+  position: relative;
+}
+
+.sm-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(129,140,248,0.5) 30%,
+    rgba(167,139,250,0.7) 50%,
+    rgba(129,140,248,0.5) 70%,
+    transparent 100%
+  );
+}
+
+
+/* ================= Topbar ================= */
+
+.sm-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 22px 16px;
+}
+
+.sm-topbar-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.sm-icon-badge {
+  width: 36px;
+  height: 36px;
+  border-radius: 11px;
+  background: linear-gradient(135deg, #6366f1, #8b5cf6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  color: #fff;
+  box-shadow: 0 4px 14px rgba(99,102,241,0.4);
+}
+
+.sm-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: #f1f5f9;
+}
+
+.sm-sub {
+  font-size: 11.5px;
+  color: rgba(255,255,255,0.3);
+  margin-top: 1px;
+}
+
+.sm-close {
+  width: 32px;
+  height: 32px;
+  border-radius: 9px;
+  border: 1px solid rgba(255,255,255,0.08);
+  background: rgba(255,255,255,0.04);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: rgba(255,255,255,0.35);
+  transition: all 0.15s;
+}
+
+.sm-close:hover {
+  background: rgba(255,255,255,0.09);
+  color: rgba(255,255,255,0.7);
+}
+
+
+/* ================= Textarea ================= */
+
+.sm-textarea {
+  width: 100%;
+  background: rgba(255,255,255,0.04) !important;
+  border: 1px solid rgba(255,255,255,0.08) !important;
+  border-radius: 14px !important;
+  color: #e2e8f0 !important;
+  font-family: 'Outfit', sans-serif !important;
+  font-size: 13.5px !important;
+  resize: none;
+  padding: 12px 14px !important;
+  outline: none !important;
+  min-height: 90px;
+}
+
+.sm-textarea:focus {
+  border-color: rgba(99,102,241,0.45) !important;
+  background: rgba(99,102,241,0.05) !important;
+}
+
+.sm-textarea::placeholder {
+  color: rgba(255,255,255,0.2) !important;
+}
+
+
+/* ================= Share Button ================= */
+
+.sm-share-btn {
+  width: 100%;
+  margin-top: 14px;
+  padding: 13px;
+  border-radius: 14px;
+  border: none;
+  font-family: 'Outfit', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #a855f7 100%);
+  color: #fff;
+  box-shadow: 0 4px 20px rgba(99,102,241,0.35);
+  transition: all 0.2s;
+}
+
+.sm-share-btn:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 28px rgba(99,102,241,0.5);
+}
+
+.sm-share-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
