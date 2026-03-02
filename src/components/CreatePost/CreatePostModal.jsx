@@ -1,4 +1,4 @@
-import { Modal, ModalContent } from "@heroui/react";
+import { Modal, ModalContent, Button, Avatar, Divider } from "@heroui/react";
 import {
   FaImage,
   FaVideo,
@@ -6,9 +6,15 @@ import {
   FaSmile,
   FaUserTag,
   FaPaperPlane,
+  FaTimes,
+  FaGlobe,
+  FaLock,
+  FaUsers
 } from "react-icons/fa";
-import { IoClose } from "react-icons/io5";
+import { HiDotsHorizontal } from "react-icons/hi";
+import { BsEmojiSmile } from "react-icons/bs";
 import React, { useRef, useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import defaultImageUser from "../../assets/images/deafultPerson2.jpg";
 import { createPost } from "../../services/PostsServices";
 
@@ -16,20 +22,29 @@ export default function CreatePostModal({ isOpen, onOpenChange }) {
   const [postText, setPostText] = useState("");
   const [selectedImage, setSelectedImage] = useState(null);
   const [previewUrl, setPreviewUrl] = useState("");
-  const fileInput = useRef();
-  const userTextArea = useRef();
+  const [privacy, setPrivacy] = useState("public");
   const [posting, setPosting] = useState(false);
+  const [showPrivacyMenu, setShowPrivacyMenu] = useState(false);
+  
+  const fileInput = useRef();
+  const textareaRef = useRef();
+
+  const privacyOptions = [
+    { value: "public", label: "Public", icon: FaGlobe, color: "text-green-500" },
+    { value: "friends", label: "Friends", icon: FaUsers, color: "text-blue-500" },
+    { value: "private", label: "Only me", icon: FaLock, color: "text-red-500" },
+  ];
+
   function openFileInput() {
     fileInput.current?.click();
   }
 
-  function chooseFile(e) {
-    const file = e?.target?.files?.[0] ?? fileInput.current?.files?.[0];
+  function handleFileSelect(e) {
+    const file = e.target.files?.[0];
     if (!file) return;
 
-    // revoke previous preview
     if (previewUrl) URL.revokeObjectURL(previewUrl);
-
+    
     const url = URL.createObjectURL(file);
     setSelectedImage(file);
     setPreviewUrl(url);
@@ -42,171 +57,249 @@ export default function CreatePostModal({ isOpen, onOpenChange }) {
     if (fileInput.current) fileInput.current.value = null;
   }
 
-  React.useEffect(() => {
-    return () => {
-      if (previewUrl) URL.revokeObjectURL(previewUrl);
-    };
-  }, [previewUrl]);
-
-
   async function createPostData() {
     const formData = new FormData();
-    if (postText && postText.trim()) {
+    if (postText?.trim()) {
       formData.append("body", postText.trim());
     }
     if (selectedImage) {
       formData.append("image", selectedImage);
     }
+    formData.append("privacy", privacy);
 
     try {
       setPosting(true);
       const created = await createPost(formData);
-      // clear UI
       setPostText("");
       removeImage();
-      if (typeof onOpenChange === "function") onOpenChange(false);
-      console.log("gamed y mon");
-      return created;
+      onOpenChange(false);
     } catch (error) {
-      console.error("createPost failed:", error?.response?.data ?? error);
-      try { window.alert("Failed to create post. See console for details."); } catch {}
-      return null;
+      console.error("Failed to create post:", error);
     } finally {
       setPosting(false);
     }
   }
+
+  const currentPrivacy = privacyOptions.find(opt => opt.value === privacy);
+
   return (
-    <Modal
-      isOpen={isOpen}
+    <Modal 
+      isOpen={isOpen} 
       onOpenChange={onOpenChange}
-      placement="center"
       size="2xl"
       scrollBehavior="inside"
+      classNames={{
+        base: "bg-transparent",
+        wrapper: "backdrop-blur-md",
+      }}
     >
-      <ModalContent className="bg-transparent shadow-none p-0 rounded-3xl">
+      <ModalContent className="bg-white dark:bg-slate-900 rounded-2xl shadow-2xl">
         {(onClose) => (
-          <div className="bg-white dark:bg-neutral-900 rounded-3xl overflow-hidden max-h-[80vh] flex flex-col">
-
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.95 }}
+            className="overflow-hidden"
+          >
             {/* Header */}
-            <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200 dark:border-neutral-800">
-              <h2 className="text-lg font-semibold">Create Post</h2>
+            <div className="flex items-center justify-between px-6 py-4 border-b border-slate-200 dark:border-slate-800">
+              <h2 className="text-xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                Create Post
+              </h2>
+              <Button
+                isIconOnly
+                variant="light"
+                onClick={onClose}
+                className="rounded-full hover:bg-slate-100 dark:hover:bg-slate-800"
+              >
+                <FaTimes />
+              </Button>
             </div>
 
             {/* Body */}
-            <div className="px-6 py-5 space-y-5 overflow-auto">
-
-              {/* User Info */}
-              <div className="flex items-center gap-3">
-                <img
-                  src={defaultImageUser}
-                  alt="user"
-                  className="w-11 h-11 rounded-full object-cover"
-                />
-                <div>
-                  <p className="font-semibold text-sm">John Doe</p>
-                  <span className="text-xs text-gray-500">🌍 Public</span>
+            <div className="px-6 py-5 max-h-[60vh] overflow-y-auto scrollbar-thin">
+              
+              {/* User Info & Privacy */}
+              <div className="flex items-start justify-between mb-4">
+                <div className="flex items-center gap-3">
+                  <Avatar 
+                    src={defaultImageUser} 
+                    className="w-12 h-12 ring-2 ring-blue-100 dark:ring-blue-900"
+                  />
+                  <div>
+                    <p className="font-semibold">John Doe</p>
+                    <div className="relative">
+                      <button
+                        onClick={() => setShowPrivacyMenu(!showPrivacyMenu)}
+                        className="flex items-center gap-1 px-2 py-1 text-xs rounded-full bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors"
+                      >
+                        {currentPrivacy && (
+                          <>
+                            <currentPrivacy.icon className={`w-3 h-3 ${currentPrivacy.color}`} />
+                            <span>{currentPrivacy.label}</span>
+                          </>
+                        )}
+                      </button>
+                      
+                      <AnimatePresence>
+                        {showPrivacyMenu && (
+                          <motion.div
+                            initial={{ opacity: 0, y: -10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, y: -10 }}
+                            className="absolute top-full left-0 mt-1 w-40 bg-white dark:bg-slate-800 rounded-xl shadow-lg border border-slate-200 dark:border-slate-700 z-50"
+                          >
+                            {privacyOptions.map((option) => (
+                              <button
+                                key={option.value}
+                                onClick={() => {
+                                  setPrivacy(option.value);
+                                  setShowPrivacyMenu(false);
+                                }}
+                                className="flex items-center gap-2 w-full px-3 py-2 text-sm hover:bg-slate-100 dark:hover:bg-slate-700 first:rounded-t-xl last:rounded-b-xl"
+                              >
+                                <option.icon className={`w-4 h-4 ${option.color}`} />
+                                <span>{option.label}</span>
+                              </button>
+                            ))}
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
+                    </div>
+                  </div>
                 </div>
+                
+                <Button
+                  isIconOnly
+                  variant="light"
+                  className="rounded-full"
+                >
+                  <HiDotsHorizontal />
+                </Button>
               </div>
 
               {/* Textarea */}
               <textarea
+                ref={textareaRef}
                 value={postText}
                 onChange={(e) => setPostText(e.target.value)}
                 placeholder="What's on your mind?"
-                className="w-full resize-none bg-transparent focus:outline-none text-lg placeholder-gray-400"
-                rows={2}
-                ref={userTextArea}
+                className="w-full resize-none bg-transparent border-0 focus:ring-0 text-lg placeholder-slate-400 dark:placeholder-slate-600 min-h-[120px] outline-none"
+                autoFocus
               />
 
-              {/* Image Preview / Picker */}
+              {/* Image Preview */}
+              <AnimatePresence>
+                {previewUrl && (
+                  <motion.div
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: "auto" }}
+                    exit={{ opacity: 0, height: 0 }}
+                    className="relative mt-4 rounded-xl overflow-hidden border border-slate-200 dark:border-slate-800"
+                  >
+                    <img 
+                      src={previewUrl} 
+                      alt="Preview" 
+                      className="w-full max-h-96 object-contain bg-slate-100 dark:bg-slate-900"
+                    />
+                    <button
+                      onClick={removeImage}
+                      className="absolute top-2 right-2 p-1.5 bg-slate-900/50 hover:bg-slate-900/70 backdrop-blur-sm text-white rounded-full transition-colors"
+                    >
+                      <FaTimes className="w-4 h-4" />
+                    </button>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+
+              {/* Hidden file input */}
               <input
-                onChange={chooseFile}
                 ref={fileInput}
                 type="file"
                 accept="image/*"
-                hidden
+                onChange={handleFileSelect}
+                className="hidden"
               />
 
-              {previewUrl ? (
-                <div className="relative rounded-2xl overflow-hidden h-44">
-                  <img src={previewUrl} alt="preview" className="object-cover w-full h-full" />
-                  <button
-                    onClick={removeImage}
-                    className="absolute top-2 right-2 bg-white bg-opacity-80 text-gray-700 rounded-full p-1 hover:bg-opacity-100"
-                    aria-label="Remove image"
-                  >
-                    ✕
-                  </button>
-                </div>
-              ) : (
-                <div
-                  onClick={openFileInput}
-                  className="border-2 border-dashed border-gray-300 dark:border-neutral-700 rounded-2xl h-44 flex items-center justify-center text-gray-400 text-sm cursor-pointer"
-                >
-                  Click to add an image
-                </div>
-              )}
-
               {/* Divider */}
-              <div className="border-t border-gray-200 dark:border-neutral-800" />
+              <Divider className="my-4" />
 
-              {/* Action Buttons */}
-              <div className="flex flex-wrap gap-3 justify-between">
-                <ActionButton icon={<FaImage />} label="Photo" color="text-green-500" onClick={openFileInput} />
-                <ActionButton icon={<FaVideo />} label="Video" color="text-red-500" />
-                <ActionButton icon={<FaUserTag />} label="Tag" color="text-blue-500" />
-                <ActionButton icon={<FaMapMarkerAlt />} label="Location" color="text-pink-500" />
-                <ActionButton icon={<FaSmile />} label="Feeling" color="text-yellow-500" />
+              {/* Add to Post */}
+              <div className="space-y-3">
+                <p className="text-sm font-medium text-slate-600 dark:text-slate-400">Add to your post</p>
+                <div className="flex flex-wrap gap-2">
+                  <ActionButton2 
+                    icon={<FaImage />} 
+                    label="Photo" 
+                    color="text-green-500"
+                    onClick={openFileInput}
+                  />
+                  <ActionButton2 
+                    icon={<FaVideo />} 
+                    label="Video" 
+                    color="text-red-500"
+                  />
+                  <ActionButton2 
+                    icon={<FaUserTag />} 
+                    label="Tag" 
+                    color="text-blue-500"
+                  />
+                  <ActionButton2 
+                    icon={<FaMapMarkerAlt />} 
+                    label="Location" 
+                    color="text-pink-500"
+                  />
+                  <ActionButton2 
+                    icon={<FaSmile />} 
+                    label="Feeling" 
+                    color="text-yellow-500"
+                  />
+                  <ActionButton2 
+                    icon={<BsEmojiSmile />} 
+                    label="Activity" 
+                    color="text-purple-500"
+                  />
+                </div>
               </div>
             </div>
 
             {/* Footer */}
-            <div className="px-6 py-4 border-t border-gray-200 dark:border-neutral-800">
+            <div className="px-6 py-4 border-t border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/50">
               <div className="flex gap-3">
-                <button
-                  onClick={onClose}
-                  className="flex-1 py-3 rounded-xl font-semibold border border-gray-200 text-gray-700 hover:bg-gray-50 transition"
+                <Button
+                  variant="bordered"
+                  onPress={onClose}
+                  className="flex-1 border-slate-300 dark:border-slate-700"
                 >
                   Cancel
-                </button>
-
-                <button
-                  onClick={createPostData}
-                  disabled={posting || (!postText.trim() && !selectedImage)}
-                  className={`flex-1 py-3 rounded-xl font-semibold flex items-center justify-center gap-2 transition 
-                    ${
-                      postText.trim() || selectedImage
-                        ? "bg-blue-600 hover:bg-blue-700 text-white"
-                        : "bg-gray-200 text-gray-400 cursor-not-allowed"
-                    }`}
+                </Button>
+                <Button
+                  color="primary"
+                  onPress={createPostData}
+                  isLoading={posting}
+                  isDisabled={!postText?.trim() && !selectedImage}
+                  className="flex-1 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white border-0"
+                  startContent={!posting && <FaPaperPlane className="w-4 h-4" />}
                 >
-                  {posting ? (
-                    <svg className="w-5 h-5 animate-spin text-white" viewBox="0 0 24 24">
-                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
-                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z" />
-                    </svg>
-                  ) : (
-                    <FaPaperPlane />
-                  )}
-                  <span>{posting ? "Posting..." : "Post"}</span>
-                </button>
+                  {posting ? "Posting..." : "Post"}
+                </Button>
               </div>
             </div>
-          </div>
+          </motion.div>
         )}
       </ModalContent>
     </Modal>
   );
 }
 
-function ActionButton({ icon, label, color, onClick }) {
+function ActionButton2({ icon, label, color, onClick }) {
   return (
     <button
       onClick={onClick}
-      className="flex items-center gap-2 px-4 py-2 rounded-xl hover:bg-gray-100 dark:hover:bg-neutral-800 transition text-sm font-medium"
+      className="flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 transition-all hover:scale-105"
     >
       <span className={`${color} text-lg`}>{icon}</span>
-      {label}
+      <span className="text-sm font-medium hidden sm:block">{label}</span>
     </button>
   );
 }

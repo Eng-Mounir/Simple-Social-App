@@ -7,6 +7,8 @@ import { getAllPosts } from "../../services/PostsServices";
 import Skeleton from "../../components/Skeleton/Skeleton";
 import PostDetails from "../../components/PostDetails/PostDetails";
 import CreatePost from "../../components/CreatePost/CreatePost";
+import { motion, AnimatePresence } from "framer-motion";
+
 export default function NewFeed() {
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -28,28 +30,68 @@ export default function NewFeed() {
   }, []);
 
   return (
-    <main className="min-h-screen">
-      <div className="container mx-auto">
-        <div className="grid grid-cols-4 gap-2">
-          <div className="col-span-1">
-            <SideBar />
+    <main className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-50 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950">
+      <div className="container mx-auto px-4 py-6 max-w-7xl">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+          
+          {/* Left Sidebar - Hidden on mobile */}
+          <div className="hidden lg:block lg:col-span-3">
+            <div className="sticky top-20">
+              <SideBar />
+            </div>
           </div>
-          <div className="col-span-2">
-            <CreatePost />
+
+          {/* Main Feed */}
+          <div className="lg:col-span-6 space-y-4">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+            >
+              <CreatePost />
+            </motion.div>
+            
             <PostDetails />
-            {loading ? (Array(5).fill(null).map((_, index) => <Skeleton key={index} />)) : (
-              posts.map((post) => (
-                <PostCard
-                  key={post._id}
-                  postCreateName={post.user?.name || "Unknown User"}
-                  post={post}
-                />
-              ))
-            )}
+            
+            <AnimatePresence mode="wait">
+              {loading ? (
+                <div className="space-y-4">
+                  {Array(3).fill(null).map((_, index) => (
+                    <motion.div
+                      key={index}
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: index * 0.1 }}
+                    >
+                      <Skeleton />
+                    </motion.div>
+                  ))}
+                </div>
+              ) : (
+                posts.map((post, index) => (
+                  <motion.div
+                    key={post._id}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: index * 0.1 }}
+                    whileHover={{ y: -2 }}
+                    className="transition-all duration-300"
+                  >
+                    <PostCard
+                      postCreateName={post.user?.name || "Unknown User"}
+                      post={post}
+                    />
+                  </motion.div>
+                ))
+              )}
+            </AnimatePresence>
           </div>
-         
-          <div className="col-span-1">
-            <RightSideBar />
+
+          {/* Right Sidebar - Hidden on mobile/tablet */}
+          <div className="hidden xl:block xl:col-span-3">
+            <div className="sticky top-20">
+              <RightSideBar />
+            </div>
           </div>
         </div>
       </div>

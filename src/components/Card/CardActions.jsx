@@ -1,27 +1,45 @@
-import React from 'react'
-import { AiOutlineLike, AiOutlineMessage, AiOutlineShareAlt } from "react-icons/ai";
+import React from 'react';
+import { Button } from "@heroui/react";
+import { motion } from "framer-motion";
+import { AiOutlineLike, AiFillLike } from "react-icons/ai";
+import { FaRegCommentDots, FaRegShareSquare } from "react-icons/fa";
+
 export default function CardActions({ post, onOpen }) {
-  const { likesCount, sharesCount, commentsCount } = post || {};
+  const [liked, setLiked] = React.useState(false);
+
   return (
-    <>
-          <div className="grid grid-cols-3 gap-1 p-1">
-        <button className="flex items-center justify-center gap-2 rounded-md p-2 text-sm font-semibold text-slate-600 hover:bg-slate-100">
-          <AiOutlineLike size={18} />
+    <div className="grid grid-cols-3 gap-1 p-1">
+      <motion.div whileTap={{ scale: 0.95 }}>
+        <Button
+          variant="light"
+          className={`w-full rounded-xl ${liked ? 'text-blue-600' : 'text-slate-600'}`}
+          startContent={liked ? <AiFillLike /> : <AiOutlineLike />}
+          onClick={() => setLiked(!liked)}
+        >
           Like
-          <span className="ml-1 text-xs text-slate-500">{likesCount || 0}</span>
-        </button>
+        </Button>
+      </motion.div>
 
-        <button onClick={onOpen} className="flex items-center justify-center gap-2 rounded-md p-2 text-sm font-semibold text-slate-600 hover:bg-slate-100">
-          <AiOutlineMessage size={18} />
+      <motion.div whileTap={{ scale: 0.95 }}>
+        <Button
+          variant="light"
+          className="w-full rounded-xl text-slate-600"
+          startContent={<FaRegCommentDots />}
+          onClick={onOpen}
+        >
           Comment
-          <span className="ml-1 text-xs text-slate-500">{commentsCount || 0}</span>
-        </button>
+        </Button>
+      </motion.div>
 
-        <button className="flex items-center justify-center gap-2 rounded-md p-2 text-sm font-semibold text-slate-600 hover:bg-slate-100">
-          <AiOutlineShareAlt size={18} />
+      <motion.div whileTap={{ scale: 0.95 }}>
+        <Button
+          variant="light"
+          className="w-full rounded-xl text-slate-600"
+          startContent={<FaRegShareSquare />}
+        >
           Share
-        </button>
-      </div>
-    </>
-  )
+        </Button>
+      </motion.div>
+    </div>
+  );
 }

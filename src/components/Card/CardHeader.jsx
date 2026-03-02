@@ -1,40 +1,59 @@
-import React from 'react'
-import {
-  AiOutlineGlobal,
-  AiOutlineEllipsis,
-} from "react-icons/ai";
-import defaultImage from "../../assets/images/defaultImage.jpg";
-export default function CardHeader({post}) {
-    const { user, createdAt, privacy } = post || {};
-  return (<>
-        <div className="flex items-center gap-3">
-          <img
-            src={user?.photo || defaultImage}
-            alt={user?.name || "Unknown User"}
-            className="h-11 w-11 rounded-full object-cover"
-          />
+import React from 'react';
+import { Avatar, Button, Dropdown } from "@heroui/react";
+import { HiDotsHorizontal } from "react-icons/hi";
+import { FaGlobe, FaLock, FaUsers } from "react-icons/fa";
+import { formatDistanceToNow } from 'date-fns';
 
-          <div className="min-w-0 flex-1">
-            <p className="truncate text-sm font-bold text-foreground hover:underline">
-              {user?.name || "Unknown User"}
-            </p>
+export default function CardHeader({ post }) {
+  const { user, createdAt, privacy } = post || {};
 
-            <div className="flex items-center gap-1 text-xs text-muted-foreground">
-              <span>@{user?.username || "unknown"}</span>
-              <span>·</span>
-              <span>{createdAt ? new Date(createdAt).toLocaleTimeString() : "Unknown time"}</span>
-              <span>·</span>
-              <span className="inline-flex items-center gap-1">
-                <AiOutlineGlobal size={12} />
-                {privacy || "Public"}
-              </span>
-            </div>
-          </div>
+  const privacyIcons = {
+    public: FaGlobe,
+    friends: FaUsers,
+    private: FaLock
+  };
 
-          <button className="rounded-full p-1.5 text-slate-500 hover:bg-slate-100 hover:text-slate-700">
-            <AiOutlineEllipsis size={18} />
-          </button>
+  const PrivacyIcon = privacyIcons[privacy] || FaGlobe;
+
+  return (
+    <div className="flex items-start gap-3">
+      <Avatar 
+        src={user?.photo} 
+        className="w-12 h-12 ring-2 ring-blue-100 dark:ring-blue-900"
+      />
+      
+      <div className="flex-1 min-w-0">
+        <div className="flex items-center gap-2">
+          <p className="font-semibold hover:underline cursor-pointer">
+            {user?.name || "Unknown User"}
+          </p>
+          <span className="text-xs text-slate-500">@{user?.username || "unknown"}</span>
         </div>
-    </>
-  )     
-}   
+        
+        <div className="flex items-center gap-2 text-xs text-slate-500 mt-0.5">
+          <span>{createdAt ? formatDistanceToNow(new Date(createdAt), { addSuffix: true }) : "Unknown time"}</span>
+          <span>·</span>
+          <div className="flex items-center gap-1">
+            <PrivacyIcon className="w-3 h-3" />
+            <span className="capitalize">{privacy || "public"}</span>
+          </div>
+        </div>
+      </div>
+
+      <Dropdown>
+        <Button
+          isIconOnly
+          variant="light"
+          className="rounded-full"
+        >
+          <HiDotsHorizontal className="w-5 h-5" />
+        </Button>
+        <Dropdown.Menu>
+          <Dropdown.Item>Save post</Dropdown.Item>
+          <Dropdown.Item>Hide post</Dropdown.Item>
+          <Dropdown.Item className="text-red-500">Report</Dropdown.Item>
+        </Dropdown.Menu>
+      </Dropdown>
+    </div>
+  );
+}

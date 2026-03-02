@@ -1,73 +1,161 @@
-import React from "react";
-import { FiUsers, FiSearch, FiUserPlus } from "react-icons/fi";
+import React, { useState } from 'react';
+import { Card, Input, Avatar, Button, Badge } from "@heroui/react";
+import { motion, AnimatePresence } from "framer-motion";
+import { 
+  FiUsers, 
+  FiSearch, 
+  FiUserPlus,
+  FiMessageCircle,
+  FiStar 
+} from "react-icons/fi";
+import { HiOutlineSparkles, HiOutlineUserGroup } from "react-icons/hi";
+import { BsFillPersonCheckFill } from "react-icons/bs";
 
 export default function RightSideBar() {
-  return (
-    <aside className="hidden h-fit xl:sticky xl:top-[84px] xl:block">
-      <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+  const [searchQuery, setSearchQuery] = useState("");
+  
+  const suggestions = [
+    {
+      id: 1,
+      name: "Ahmed Bahnasy",
+      username: "@bahnasy20222",
+      avatar: "https://pub-3cba56bacf9f4965bbb0989e07dada12.r2.dev/linkedPosts/1771018057253-2285ec56-8e3c-4ea3-9ee4-c235037ffffe-Screenshot-2026-02-13-at-11.27.15---PM.png",
+      followers: "75",
+      mutual: 12
+    },
+    {
+      id: 2,
+      name: "Sarah Ahmed",
+      username: "@sarah.ahmed",
+      avatar: "https://i.pravatar.cc/150?img=1",
+      followers: "1.2k",
+      mutual: 8
+    },
+    {
+      id: 3,
+      name: "Mohamed Ali",
+      username: "@m.ali",
+      avatar: "https://i.pravatar.cc/150?img=3",
+      followers: "450",
+      mutual: 5
+    }
+  ];
 
-        {/* Header */}
-        <div className="mb-3 flex items-center justify-between gap-2">
+  return (
+    <Card className="border-0 shadow-lg shadow-slate-200/50 dark:shadow-slate-900/50 backdrop-blur-sm bg-white/90 dark:bg-slate-900/90 overflow-hidden">
+      
+      {/* Header */}
+      <div className="p-4 border-b border-slate-200 dark:border-slate-800">
+        <div className="flex items-center justify-between mb-3">
           <div className="flex items-center gap-2">
-            <FiUsers className="text-[#1877f2] w-5 h-5" />
-            <h3 className="text-base font-extrabold text-slate-900">
-              Suggested Friends
-            </h3>
+            <div className="p-2 bg-gradient-to-br from-blue-500 to-purple-500 rounded-xl">
+              <HiOutlineSparkles className="w-4 h-4 text-white" />
+            </div>
+            <h3 className="font-bold text-lg">Suggestions</h3>
           </div>
-          <span className="rounded-full bg-slate-100 px-2 py-0.5 text-xs font-bold text-slate-600">
-            5
-          </span>
+          <Badge color="primary" variant="flat" className="text-xs">
+            5 new
+          </Badge>
         </div>
 
         {/* Search */}
-        <div className="mb-3">
-          <label className="relative block">
-            <FiSearch className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 w-4 h-4" />
-            <input
-              placeholder="Search friends..."
-              className="w-full rounded-xl border border-slate-200 bg-slate-50 py-2 pl-9 pr-3 text-sm text-slate-700 outline-none focus:border-[#1877f2] focus:bg-white"
-            />
-          </label>
-        </div>
-
-        {/* Friend Card */}
-        <div className="space-y-3">
-          <div className="rounded-xl border border-slate-200 p-2.5">
-            <div className="flex items-center justify-between gap-2">
-              <button
-                type="button"
-                className="flex min-w-0 items-center gap-2 rounded-lg px-1 py-1 text-left transition hover:bg-slate-50"
-              >
-                <img
-                  alt="Ahmed Bahnasy"
-                  className="h-10 w-10 rounded-full object-cover"
-                  src="https://pub-3cba56bacf9f4965bbb0989e07dada12.r2.dev/linkedPosts/1771018057253-2285ec56-8e3c-4ea3-9ee4-c235037ffffe-Screenshot-2026-02-13-at-11.27.15---PM.png"
-                />
-                <div className="min-w-0">
-                  <p className="truncate text-sm font-bold text-slate-900 hover:underline">
-                    Ahmed Bahnasy
-                  </p>
-                  <p className="truncate text-xs text-slate-500">@bahnasy20222</p>
-                </div>
-              </button>
-
-              <button className="inline-flex items-center gap-1 rounded-full px-3 py-1.5 text-xs font-bold transition bg-[#e7f3ff] text-[#1877f2] hover:bg-[#d8ebff]">
-                <FiUserPlus className="w-3 h-3" />
-                Follow
-              </button>
-            </div>
-
-            <div className="mt-2 flex items-center gap-2 text-[11px] font-semibold text-slate-500">
-              <span className="rounded-full bg-slate-100 px-2 py-0.5">75 followers</span>
-            </div>
-          </div>
-        </div>
-
-        {/* View More */}
-        <button className="mt-3 inline-flex w-full items-center justify-center gap-2 rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm font-bold text-slate-700 transition hover:bg-slate-100">
-          View more
-        </button>
+        <Input
+          placeholder="Search friends..."
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          startContent={<FiSearch className="text-slate-400 w-4 h-4" />}
+          classNames={{
+            input: "text-sm",
+            inputWrapper: "bg-slate-100 dark:bg-slate-800 border-0"
+          }}
+        />
       </div>
-    </aside>
+
+      {/* Suggestions List */}
+      <div className="p-4 space-y-4 max-h-[400px] overflow-y-auto scrollbar-thin">
+        <AnimatePresence>
+          {suggestions.map((user, index) => (
+            <motion.div
+              key={user.id}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, x: -20 }}
+              transition={{ delay: index * 0.1 }}
+              className="group"
+            >
+              <div className="relative p-3 rounded-xl bg-slate-50 dark:bg-slate-800/50 hover:bg-gradient-to-r hover:from-blue-50 hover:to-purple-50 dark:hover:from-blue-900/20 dark:hover:to-purple-900/20 transition-all">
+                
+                {/* User Info */}
+                <div className="flex items-start gap-3">
+                  <Avatar 
+                    src={user.avatar} 
+                    className="w-12 h-12 ring-2 ring-white dark:ring-slate-700 group-hover:ring-blue-200 dark:group-hover:ring-blue-900 transition-all"
+                  />
+                  
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-start justify-between">
+                      <div>
+                        <p className="font-semibold text-sm truncate">{user.name}</p>
+                        <p className="text-xs text-slate-500">{user.username}</p>
+                      </div>
+                      <Button
+                        isIconOnly
+                        size="sm"
+                        variant="light"
+                        className="rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+                      >
+                        <FiMessageCircle className="w-4 h-4" />
+                      </Button>
+                    </div>
+
+                    {/* Stats */}
+                    <div className="flex items-center gap-3 mt-2">
+                      <div className="flex items-center gap-1 text-xs text-slate-500">
+                        <FiUsers className="w-3 h-3" />
+                        <span>{user.followers} followers</span>
+                      </div>
+                      <div className="flex items-center gap-1 text-xs text-slate-500">
+                        <FiStar className="w-3 h-3" />
+                        <span>{user.mutual} mutual</span>
+                      </div>
+                    </div>
+
+                    {/* Action Buttons */}
+                    <div className="flex items-center gap-2 mt-3">
+                      <Button
+                        size="sm"
+                        color="primary"
+                        className="flex-1 bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white border-0 text-xs"
+                        startContent={<FiUserPlus className="w-3 h-3" />}
+                      >
+                        Follow
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="bordered"
+                        className="flex-1 border-slate-300 dark:border-slate-700 text-xs"
+                      >
+                        Ignore
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+          ))}
+        </AnimatePresence>
+      </div>
+
+      {/* View More */}
+      <div className="p-4 pt-0">
+        <Button
+          variant="light"
+          className="w-full bg-gradient-to-r from-slate-100 to-slate-200 dark:from-slate-800 dark:to-slate-900 hover:from-slate-200 hover:to-slate-300 dark:hover:from-slate-700 dark:hover:to-slate-800 text-sm font-medium"
+          endContent={<HiOutlineUserGroup />}
+        >
+          View all suggestions
+        </Button>
+      </div>
+    </Card>
   );
 }
