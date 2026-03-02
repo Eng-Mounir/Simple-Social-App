@@ -165,7 +165,6 @@ export async function createPost(formData) {
       {
         headers: {
           token: localStorage.getItem("token"),
-          // Let axios/browser set Content-Type for FormData
         },
       }
     );
@@ -182,4 +181,54 @@ export async function createPost(formData) {
     console.error("createPost API error:", error);
     throw error.response ? error : new Error("Network error");
   }
+}
+
+export async function likePost(postId) {
+  try {
+    const response = await axios.put(
+      `${API_BASE_URL}/posts/${postId}/like`,
+      {},
+      {
+        headers: {
+          token: localStorage.getItem("token"),
+        },
+      }
+    );  
+    return response.data;
+  } catch (error) {    throw error.response ? error : new Error("Network error");
+  }
+}
+
+export async function unlikePost(postId) { 
+  try {
+    const response = await axios.post(
+      `${API_BASE_URL}/posts/${postId}/unlike`,
+      {}, 
+      {
+        headers: {
+          token: localStorage.getItem("token"),
+        },
+      }
+    );  
+    return response.data;
+  } catch (error) {
+    throw error.response ? error : new Error("Network error");
+  }   
+}
+
+export async function sharePost(postId) { 
+  try {   
+    const response = await axios.post(  
+      `${API_BASE_URL}/posts/${postId}/share`,
+      {},
+      {
+        headers: {  
+          token: localStorage.getItem("token"),
+        },
+      }
+    );  
+    return response.data;
+  } catch (error) {
+    throw error.response ? error : new Error("Network error");
+  } 
 }
