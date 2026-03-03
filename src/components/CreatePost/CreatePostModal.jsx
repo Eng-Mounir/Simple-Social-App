@@ -17,8 +17,11 @@ import React, { useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import defaultImageUser from "../../assets/images/deafultPerson2.jpg";
 import { createPost } from "../../services/PostsServices";
-
+import { getLoggededUserData } from "../../services/UserServices";
+import { UserContext } from "../../context/UserContext";
+import { useContext } from "react";
 export default function CreatePostModal({ isOpen, onOpenChange }) {
+  const { userData } = useContext(UserContext);
   const [postText, setPostText] = useState("");
   const [selectedImage, setSelectedImage] = useState(null);
   const [previewUrl, setPreviewUrl] = useState("");
@@ -123,11 +126,11 @@ export default function CreatePostModal({ isOpen, onOpenChange }) {
               <div className="flex items-start justify-between mb-4">
                 <div className="flex items-center gap-3">
                   <Avatar 
-                    src={defaultImageUser} 
+                    src={userData?.user?.photo || defaultImageUser} 
                     className="w-12 h-12 ring-2 ring-blue-100 dark:ring-blue-900"
                   />
                   <div>
-                    <p className="font-semibold">John Doe</p>
+                    <p className="font-semibold">{userData?.user?.name || "Unknown User"}</p>
                     <div className="relative">
                       <button
                         onClick={() => setShowPrivacyMenu(!showPrivacyMenu)}
