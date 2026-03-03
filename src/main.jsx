@@ -7,12 +7,11 @@ import AuthContextProvider from './context/AuthContext.jsx';
 import UserContextProvider from './context/UserContext.jsx';
 createRoot(document.getElementById('root')).render(
   <StrictMode>
-
+<UserContextProvider>
   <AuthContextProvider>
-    <UserContextProvider>
       <App />
       <ToastContainer />
-    </UserContextProvider>
-  </AuthContextProvider>
+    </AuthContextProvider>
+</UserContextProvider>
   </StrictMode>,
 )
