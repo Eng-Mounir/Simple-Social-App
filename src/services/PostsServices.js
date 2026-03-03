@@ -234,19 +234,3 @@ export async function sharePost(postId) {
 }
 
 
-
-export async function getLoggededUserData() {
-  try {
-    const response = await axios.get(
-      `${API_BASE_URL}/users/profile-data`,
-      {
-        headers: {
-          token: localStorage.getItem("token"),
-        },
-      }
-    );
-    return response;
-  } catch (error) {
-    throw error.response ? error : new Error("Network error");
-  }
-}

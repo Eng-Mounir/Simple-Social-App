@@ -4,11 +4,13 @@ import { HiPhotograph, HiVideoCamera, HiEmojiHappy } from "react-icons/hi";
 import { BsCalendar2Event, BsFileText } from "react-icons/bs";
 import { BiSolidTag } from "react-icons/bi";
 import defaultPerson from "../../assets/images/deafultPerson2.jpg";
+import { useContext } from "react";
 import CreatePostModal from "./CreatePostModal";
 import { useDisclosure } from "@heroui/react";
-
+import { UserContext } from "../../context/UserContext";
 export default function CreatePost() {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
+  const { userData } = useContext(UserContext);
 
   return (
     <>
@@ -19,7 +21,7 @@ export default function CreatePost() {
         <Card className="border-0 shadow-lg shadow-slate-200/50 dark:shadow-slate-900/50 backdrop-blur-sm bg-white/90 dark:bg-slate-900/90">
           <div className="flex items-center gap-3 p-4">
             <Avatar 
-              src={defaultPerson} 
+              src={userData?.user?.photo || defaultPerson } 
               className="w-12 h-12 ring-2 ring-blue-100 dark:ring-blue-900"
             />
             <Input

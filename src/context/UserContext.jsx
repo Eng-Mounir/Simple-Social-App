@@ -1,6 +1,6 @@
 import React from 'react'
 import { createContext } from 'react';
-import { getLoggededUserData } from '../services/PostsServices';
+import { getLoggededUserData } from '../services/UserServices';
 import { useState, useEffect } from 'react';
 export const UserContext = createContext();
 

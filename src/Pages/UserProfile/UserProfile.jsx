@@ -314,7 +314,8 @@ import { BsGrid3X3, BsPeopleFill, BsPersonPlusFill } from "react-icons/bs";
 import PostCard from "../../components/PostCard/PostCard";
 import { getAllPosts } from "../../services/PostsServices";
 import { getProfileData, changePassword } from "../../services/authServices";
-
+import { useContext } from "react";
+import { UserContext } from "../../context/UserContext";
 function parseJwt(token) {
   if (!token) return null;
   try {
@@ -333,7 +334,7 @@ export default function UserProfile() {
   const [user, setUser] = useState(null);
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(false);
-
+  const { userData, isLoading } = useContext(UserContext);
   useEffect(() => {
     let mounted = true;
     async function loadProfileAndPosts() {
@@ -860,8 +861,8 @@ export default function UserProfile() {
               <div className="up-avatar-ring">
                 <div className="up-avatar-inner">
                   <Avatar
-                    src={user?.photo}
-                    name={user?.name}
+                    src={userData?.user?.photo}
+                    name={userData?.user?.name}
                     className="w-full h-full"
                   />
                 </div>
@@ -888,9 +889,9 @@ export default function UserProfile() {
 
           {/* Name & Bio */}
           <div className="up-name-section">
-            <h1 className="up-name">{user?.name || "User Name"}</h1>
-            <p className="up-handle">@{user?.username || "username"}</p>
-            <p className="up-bio">{user?.bio || "This user has no bio yet."}</p>
+            <h1 className="up-name">{userData?.user?.name || "User Name"}</h1>
+            <p className="up-handle">{userData?.user?.email || "username"}</p>
+            <p className="up-bio">{userData?.user?.bio || "This user has no bio yet."}</p>
           </div>
 
           {/* Stats */}

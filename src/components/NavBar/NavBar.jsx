@@ -11,6 +11,7 @@ import {
   DropdownMenu,
   Avatar,
   Badge,
+  user,
 } from "@heroui/react";
 import nextifylogo from "../../assets/images/nextifyLogo2.png";
 import { FiSearch, FiSun, FiMoon } from "react-icons/fi";
@@ -19,11 +20,12 @@ import userIcon from "../../assets/images/userIcon.png";
 import { LuMessageCircleMore } from "react-icons/lu";
 import { useContext, useMemo, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { getLoggededUserData } from "../../services/PostsServices";
-
+import { getLoggededUserData } from "../../services/UserServices";
+import { UserContext } from "../../context/UserContext";
 export default function App() {
   const { token, logout } = useContext(AuthContext);
-  
+  const { userData, isLoading } = useContext(UserContext);
+  // const [userData, setuserData] = useState("");
   const navigate = useNavigate();
 
   const [dark, setDark] = useState(() => {
@@ -360,10 +362,10 @@ export default function App() {
                     className="transition-transform"
                     color="secondary"
                     size="sm"
-                    src={userIcon}
+                    src={userData?.user?.photo || userIcon}
                   />
                   <span className="mnav-avatar-label">
-                    {getLoggededUserData()?.user.name || "Account"}
+                    {userData?.user?.name ? userData.user.name.split(" ")[0] : signedInAs || "User"}
                   </span>
                 </div>
               </DropdownTrigger>
@@ -372,7 +374,7 @@ export default function App() {
                 <DropdownItem key="profile" className="h-14 gap-2" isReadOnly>
                   <p className="font-semibold text-xs text-slate-400">Signed in as</p>
                   <p className="font-semibold text-sm truncate">
-                    {getLoggededUserData()?.user.email || "user@example.com"}
+                    {userData?.user?.email || "user@example.com"}
                   </p>
                 </DropdownItem>
                 <DropdownItem key="settings" onClick={() => navigate("/profile")}>
