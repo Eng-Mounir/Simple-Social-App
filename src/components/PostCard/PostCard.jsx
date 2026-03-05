@@ -7,6 +7,13 @@ import CardStats from "../Card/CardStats";
 import CardActions from "../Card/CardActions";
 import TopComment from "../Card/TopComment";
 
+// Add these console logs
+console.log('CardHeader import:', CardHeader);
+console.log('CardBody import:', CardBody);
+console.log('CardStats import:', CardStats);
+console.log('CardActions import:', CardActions);
+console.log('TopComment import:', TopComment);
+
 export default function PostCard({ post }) {
   if (!post) return null;
 
