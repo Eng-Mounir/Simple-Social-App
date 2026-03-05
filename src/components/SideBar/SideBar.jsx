@@ -29,8 +29,8 @@ export default function SideBar() {
     },
     { 
       icon: BsStars, 
-      label: "My Posts", 
-      path: "/my-posts", 
+      label: "My Profile", 
+      path: "/profile", 
       badge: null,
       end: true
     },

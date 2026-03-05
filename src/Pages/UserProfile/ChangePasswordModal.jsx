@@ -44,8 +44,8 @@ export default function ChangePasswordModal({ isOpen, onOpenChange }) {
           <div className="up-modal-inner">
             <div className="up-modal-header">
               <div className="up-modal-icon"><FaLock /></div>
-              <div>
-                <h3 className="up-modal-title">Change Password</h3>
+              <div className='text-white'>
+                <h3 className="up-modal-title text-white">Change Password</h3>
                 <p className="up-modal-sub">Keep your account secure</p>
               </div>
             </div>
