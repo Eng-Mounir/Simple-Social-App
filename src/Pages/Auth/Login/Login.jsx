@@ -68,7 +68,7 @@ export default function Login() {
 
   return (
     <div className="w-full max-w-lg px-6">
-      <Card className="w-full shadow-2xl border border-default-200">
+      <Card className="w-full shadow-2xl border border-default-200 bg-white-50">
         <CardHeader className="flex flex-col gap-3 items-center justify-center pt-8 pb-4">
           <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-purple-600 to-pink-600 flex items-center justify-center shadow-lg">
             <span className="text-3xl font-bold text-white">N</span>
@@ -85,7 +85,7 @@ export default function Login() {
 
         <Divider />
 
-        <CardBody className="px-8 py-6">
+        <CardBody className="px-8 py-6 text-black">
           <form
             autoComplete="off"
             className="space-y-4 w-full"

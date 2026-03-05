@@ -270,6 +270,17 @@ export default function AppNavbar() {
           background: rgba(139,92,246,0.2);
         }
 
+        /* Search - Hidden on mobile */
+        .mnav-search-container {
+          display: flex;
+        }
+
+        @media (max-width: 767px) {
+          .mnav-search-container {
+            display: none !important;
+          }
+        }
+
         /* Search */
         .mnav-search [data-slot="input-wrapper"] {
           background: #f4f4f8 !important;
@@ -445,8 +456,8 @@ export default function AppNavbar() {
             <span className="mnav-brandname hidden sm:block">Nextify</span>
           </NavbarBrand>
 
-          {/* Search */}
-          <NavbarContent className="flex-1 max-w-md" justify="center" style={{ position: "relative", zIndex: 1 }}>
+          {/* Search - Hidden on mobile */}
+          <NavbarContent className="mnav-search-container flex-1 max-w-md" justify="center" style={{ position: "relative", zIndex: 1 }}>
             <NavbarItem className="w-full">
               <Input
                 className="mnav-search w-full"
