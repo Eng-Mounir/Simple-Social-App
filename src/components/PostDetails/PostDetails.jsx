@@ -43,7 +43,8 @@ import {
   getPostComments,
 } from "../../services/PostsServices";
 import { createComment } from "../../services/PostsServices";
-
+import { useContext } from "react";
+import { UserContext } from "../../context/UserContext";
 export default function PostDetails({
   isOpen,
   onOpenChange,
@@ -55,7 +56,9 @@ export default function PostDetails({
   const [addingComment, setAddingComment] = useState(false);
   const [replyingTo, setReplyingTo] = useState(null);
   const [activeTab, setActiveTab] = useState("comments"); // comments, reactions, shares
-  
+  const { userData } = useContext(UserContext);
+const myPhoto = userData?.user?.photo ?? userData?.photo ?? null;
+const myName  = userData?.user?.name  ?? userData?.name  ?? "Me";
   const commentsEndRef = useRef(null);
   const textareaRef = useRef(null);
 
@@ -318,10 +321,11 @@ export default function PostDetails({
                             {/* Add Comment */}
                             <Card className="border-0 shadow-lg bg-gradient-to-br from-white to-slate-50 dark:from-slate-900 dark:to-slate-900/50 p-4">
                               <div className="flex gap-3">
-                                <Avatar 
-                                  src="https://i.pravatar.cc/150?img=7" 
-                                  className="w-10 h-10 ring-2 ring-blue-100 dark:ring-blue-900"
-                                />
+                                <Avatar
+  src={myPhoto}
+  name={myName}
+  className="w-10 h-10 ring-2 ring-blue-100 dark:ring-blue-900"
+/>
                                 <div className="flex-1">
                                   <div className="relative">
                                     <Textarea
@@ -474,10 +478,11 @@ export default function PostDetails({
                                               className="mt-3"
                                             >
                                               <div className="flex gap-2">
-                                                <Avatar 
-                                                  src="https://i.pravatar.cc/150?img=7"
-                                                  className="w-8 h-8"
-                                                />
+                                                <Avatar
+  src={myPhoto}
+  name={myName}
+  className="w-8 h-8"
+/>
                                                 <div className="flex-1 flex gap-2">
                                                   <input
                                                     type="text"

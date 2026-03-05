@@ -215,22 +215,80 @@ export async function unlikePost(postId) {
     throw error.response ? error : new Error("Network error");
   }   
 }
-
-export async function sharePost(postId) { 
-  try {   
-    const response = await axios.post(  
-      `${API_BASE_URL}/posts/${postId}/share`,
-      {},
-      {
-        headers: {  
-          token: localStorage.getItem("token"),
-        },
-      }
-    );  
+export async function sharePost(postId) {
+  try {
+    // Make sure we're using the correct HTTP method (POST vs PUT)
+    const response = await axios({
+      method: 'POST', // or 'PUT' depending on your API
+      url: `${API_BASE_URL}/posts/${postId}/share`,
+      headers: {
+        'token': localStorage.getItem("token"),
+        'Content-Type': 'application/json',
+      },
+    });
+    
     return response.data;
   } catch (error) {
+    console.error("Share post error details:", {
+      status: error.response?.status,
+      data: error.response?.data,
+      message: error.message
+    });
     throw error.response ? error : new Error("Network error");
-  } 
+  }
 }
 
 
+export async function getSharedPosts({ filter = 'all', page = 1, limit = 20 } = {}) {
+  try {
+    const params = new URLSearchParams({
+      page,
+      limit,
+      filter // all, following, my-shares
+    });
+
+    const response = await axios.get(
+      `${API_BASE_URL}/posts/shares?${params}`,
+      {
+        headers: {
+          token: localStorage.getItem("token"),
+        },
+      }
+    );
+
+    // Handle different response structures
+    const payload = response?.data?.data ?? response?.data;
+    
+    if (Array.isArray(payload?.shares)) {
+      return payload.shares;
+    }
+    
+    if (Array.isArray(payload)) {
+      return payload;
+    }
+    
+    return [];
+  } catch (error) {
+    console.error("Failed to fetch shared posts:", error);
+    throw error.response ? error : new Error("Network error");
+  }
+}
+
+export async function getUserShares(userId, page = 1, limit = 20) {
+  try {
+    const response = await axios.get(
+      `${API_BASE_URL}/users/${userId}/shares?page=${page}&limit=${limit}`,
+      {
+        headers: {
+          token: localStorage.getItem("token"),
+        },
+      }
+    );
+
+    const payload = response?.data?.data ?? response?.data;
+    return Array.isArray(payload?.shares) ? payload.shares : [];
+  } catch (error) {
+    console.error("Failed to fetch user shares:", error);
+    throw error.response ? error : new Error("Network error");
+  }
+}

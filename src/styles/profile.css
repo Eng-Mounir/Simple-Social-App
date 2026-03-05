@@ -1,0 +1,12 @@
+/* profile.css */
+
+/* Move Google Fonts here OR to index.html (recommended) */
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Outfit:wght@300;400;500;600&display=swap');
+
+.profile-font {
+  font-family: 'Outfit', sans-serif;
+}
+
+.profile-serif {
+  font-family: 'Cormorant Garamond', serif;
+}

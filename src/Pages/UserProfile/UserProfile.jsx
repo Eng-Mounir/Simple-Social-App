@@ -313,28 +313,31 @@ import { HiOutlinePhotograph } from "react-icons/hi";
 import { BsGrid3X3, BsPeopleFill, BsPersonPlusFill } from "react-icons/bs";
 import PostCard from "../../components/PostCard/PostCard";
 import { getAllPosts } from "../../services/PostsServices";
-import { getProfileData, changePassword } from "../../services/authServices";
+import { getProfileData } from "../../services/authServices";
 import { useContext } from "react";
 import { UserContext } from "../../context/UserContext";
-function parseJwt(token) {
-  if (!token) return null;
-  try {
-    const base64Url = token.split(".")[1];
-    const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
-    const jsonPayload = decodeURIComponent(
-      atob(base64).split("").map((c) => "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2)).join("")
-    );
-    return JSON.parse(jsonPayload);
-  } catch (e) {
-    return null;
-  }
-}
+import { uploadProfileImage,getLoggededUserData } from "../../services/UserServices"
+import ChangePasswordModal from "./ChangePasswordModal";
+import { toast } from 'react-toastify';
 
 export default function UserProfile() {
   const [user, setUser] = useState(null);
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(false);
   const { userData, isLoading } = useContext(UserContext);
+  const [uploadingImage, setUploadingImage] = useState(false);
+  const [photoPreview, setPhotoPreview] = useState(null);
+  useEffect(() => {
+    if (userData) {
+      setUser({ 
+        id: userData._id || userData.id,
+        name: userData.name || userData.fullName || userData.username || "User",
+        username: userData.username || userData.userName || "username",
+        photo: userData.photo || userData.avatar || null,
+        bio: userData.bio || "",
+      });
+    }
+  }, [userData]);
   useEffect(() => {
     let mounted = true;
     async function loadProfileAndPosts() {
@@ -376,32 +379,53 @@ export default function UserProfile() {
   }, []);
 
   const [showChangePwd, setShowChangePwd] = useState(false);
-  const [currentPwd, setCurrentPwd] = useState("");
-  const [newPwd, setNewPwd] = useState("");
-  const [confirmPwd, setConfirmPwd] = useState("");
-  const [pwdLoading, setPwdLoading] = useState(false);
-  const [showCurrent, setShowCurrent] = useState(false);
-  const [showNewPwd, setShowNewPwd] = useState(false);
-  const [showConfirmPwd, setShowConfirmPwd] = useState(false);
 
-  async function handleChangePassword() {
-    if (!currentPwd || !newPwd) return window.alert("Please fill both fields");
-    if (newPwd !== confirmPwd) return window.alert("New passwords do not match");
-    try {
-      setPwdLoading(true);
-      console.debug("ChangePassword payload:", { currentPwd, newPwd, confirmPwd });
-      await changePassword(currentPwd, newPwd, confirmPwd);
-      window.alert("Password changed successfully");
-      setShowChangePwd(false);
-      setCurrentPwd(""); setNewPwd(""); setConfirmPwd("");
-    } catch (err) {
-      console.error(err);
-      window.alert("Failed to change password. Check console for details.");
-    } finally {
-      setPwdLoading(false);
+
+async function handleUploadImage() {
+  const input = document.createElement("input");
+  input.type = "file";
+  input.accept = "image/*";
+
+  input.onchange = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (!file.type.startsWith("image/")) {
+      toast.error("Please select a valid image file");
+      return;
     }
-  }
 
+    // ✅ Show instant local preview before upload
+    const localPreview = URL.createObjectURL(file);
+    setPhotoPreview(localPreview);
+    setUploadingImage(true);
+
+    const formData = new FormData();
+    formData.append("photo", file);
+
+    try {
+      const updatedUser = await toast.promise(
+        uploadProfileImage(formData),
+        {
+          pending: "Uploading photo...",
+          success: "Profile photo updated 🎉",
+          error: "Upload failed. Please try again.",
+        }
+      );
+      // ✅ Replace preview with real URL from server
+      const newPhoto = updatedUser?.photo ?? updatedUser?.profileImage ?? localPreview;
+      setPhotoPreview(newPhoto);
+      setUser((prev) => ({ ...prev, photo: newPhoto }));
+    } catch (err) {
+      // ✅ Revert preview on failure
+      setPhotoPreview(null);
+      console.error("Upload error:", err);
+    } finally {
+      setUploadingImage(false);
+    }
+  };
+
+  input.click();
+}
   return (
     <>
       <style>{`
@@ -857,23 +881,45 @@ export default function UserProfile() {
         <div className="up-body">
           {/* Identity Row */}
           <div className="up-identity">
-            <div className="up-avatar-wrap">
-              <div className="up-avatar-ring">
-                <div className="up-avatar-inner">
-                  <Avatar
-                    src={userData?.user?.photo}
-                    name={userData?.user?.name}
-                    className="w-full h-full"
-                  />
-                </div>
-              </div>
-              <button className="up-camera-btn">
-                <FaCamera />
-              </button>
-            </div>
-
+<div className="up-avatar-wrap">
+  <div className="up-avatar-ring">
+    <div className="up-avatar-inner" style={{ position: "relative" }}>
+      <Avatar
+        src={photoPreview || user?.photo || userData?.user?.photo}
+        name={userData?.user?.name}
+        className="w-full h-full"
+        style={{ opacity: uploadingImage ? 0.5 : 1, transition: "opacity 0.3s" }}
+      />
+      {/* Spinner overlay while uploading */}
+      {uploadingImage && (
+        <div style={{
+          position: "absolute", inset: 0,
+          borderRadius: "50%",
+          background: "rgba(0,0,0,0.35)",
+          display: "flex", alignItems: "center", justifyContent: "center"
+        }}>
+          <div style={{
+            width: 28, height: 28,
+            borderRadius: "50%",
+            border: "3px solid rgba(255,255,255,0.3)",
+            borderTopColor: "#fff",
+            animation: "spin 0.7s linear infinite"
+          }} />
+        </div>
+      )}
+    </div>
+  </div>
+  <button
+    className="up-camera-btn"
+    onClick={handleUploadImage}
+    disabled={uploadingImage}
+    title="Change profile photo"
+  >
+    <FaCamera />
+  </button>
+</div>
             <div className="up-actions">
-              <button className="up-btn up-btn-outline">
+              <button  className="up-btn up-btn-outline">
                 <FaEdit style={{ fontSize: 11 }} />
                 Edit Profile
               </button>
@@ -940,88 +986,12 @@ export default function UserProfile() {
               ))}
             </div>
           )}
+          <ChangePasswordModal
+      isOpen={showChangePwd}
+      onOpenChange={setShowChangePwd}
+    />
         </div>
       </div>
-
-      {/* Change Password Modal */}
-      <Modal isOpen={showChangePwd} onOpenChange={setShowChangePwd} backdrop="blur">
-        <ModalContent>
-          {(onClose) => (
-            <div className="up-modal-inner">
-              <div className="up-modal-header">
-                <div className="up-modal-icon">
-                  <FaLock />
-                </div>
-                <div>
-                  <h3 className="up-modal-title">Change Password</h3>
-                  <p className="up-modal-sub">Keep your account secure</p>
-                </div>
-              </div>
-
-              <div className="up-field-group">
-                <label className="up-field-label">Current Password</label>
-                <div className="up-field-wrap">
-                  <input
-                    type={showCurrent ? "text" : "password"}
-                    placeholder="Enter current password"
-                    value={currentPwd}
-                    onChange={(e) => setCurrentPwd(e.target.value)}
-                    className="up-field-input"
-                  />
-                  <button type="button" className="up-field-toggle" onClick={() => setShowCurrent((s) => !s)} aria-label="Toggle">
-                    {showCurrent ? <FaEyeSlash /> : <FaEye />}
-                  </button>
-                </div>
-              </div>
-
-              <div className="up-field-group">
-                <label className="up-field-label">New Password</label>
-                <div className="up-field-wrap">
-                  <input
-                    type={showNewPwd ? "text" : "password"}
-                    placeholder="Enter new password"
-                    value={newPwd}
-                    onChange={(e) => setNewPwd(e.target.value)}
-                    className="up-field-input"
-                  />
-                  <button type="button" className="up-field-toggle" onClick={() => setShowNewPwd((s) => !s)} aria-label="Toggle">
-                    {showNewPwd ? <FaEyeSlash /> : <FaEye />}
-                  </button>
-                </div>
-              </div>
-
-              <div className="up-field-group">
-                <label className="up-field-label">Confirm New Password</label>
-                <div className="up-field-wrap">
-                  <input
-                    type={showConfirmPwd ? "text" : "password"}
-                    placeholder="Confirm new password"
-                    value={confirmPwd}
-                    onChange={(e) => setConfirmPwd(e.target.value)}
-                    className="up-field-input"
-                  />
-                  <button type="button" className="up-field-toggle" onClick={() => setShowConfirmPwd((s) => !s)} aria-label="Toggle">
-                    {showConfirmPwd ? <FaEyeSlash /> : <FaEye />}
-                  </button>
-                </div>
-              </div>
-
-              <div className="up-modal-divider" />
-
-              <div className="up-modal-actions">
-                <button className="up-modal-cancel" onClick={onClose}>Cancel</button>
-                <button
-                  className="up-modal-save"
-                  onClick={handleChangePassword}
-                  disabled={pwdLoading}
-                >
-                  {pwdLoading ? "Saving…" : "Save Changes"}
-                </button>
-              </div>
-            </div>
-          )}
-        </ModalContent>
-      </Modal>
     </>
   );
-}
+} 
