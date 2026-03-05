@@ -5,7 +5,9 @@ import App from './App.jsx'
 import { ToastContainer } from 'react-toastify';
 import AuthContextProvider from './context/AuthContext.jsx';
 import UserContextProvider from './context/UserContext.jsx';
+import { ThemeProvider } from './context/ThemeContext.jsx';
 createRoot(document.getElementById('root')).render(
+  <ThemeProvider>
   <StrictMode>
 <UserContextProvider>
   <AuthContextProvider>
@@ -14,5 +16,6 @@ createRoot(document.getElementById('root')).render(
       <ToastContainer />
     </AuthContextProvider>
 </UserContextProvider>
-  </StrictMode>,
+  </StrictMode>
+   </ThemeProvider>
 )

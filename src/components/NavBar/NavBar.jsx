@@ -1,4 +1,5 @@
-import { AuthContext } from "../../context/AuthContext";
+// src/components/Navbar/Navbar.jsx
+import React, { useContext, useMemo } from "react";
 import {
   Navbar,
   NavbarBrand,
@@ -11,37 +12,22 @@ import {
   DropdownMenu,
   Avatar,
   Badge,
-  user,
 } from "@heroui/react";
 import nextifylogo from "../../assets/images/nextifyLogo2.png";
 import { FiSearch, FiSun, FiMoon } from "react-icons/fi";
 import { IoIosNotifications } from "react-icons/io";
 import userIcon from "../../assets/images/userIcon.png";
 import { LuMessageCircleMore } from "react-icons/lu";
-import { useContext, useMemo, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { getLoggededUserData } from "../../services/UserServices";
+import { AuthContext } from "../../context/AuthContext";
 import { UserContext } from "../../context/UserContext";
-export default function App() {
+import { useTheme } from "../../context/ThemeContext"; // Import useTheme
+
+export default function AppNavbar() {
   const { token, logout } = useContext(AuthContext);
-  const { userData, isLoading } = useContext(UserContext);
-  // const [userData, setuserData] = useState("");
+  const { userData } = useContext(UserContext);
+  const { dark, toggleDark } = useTheme(); // Use the theme context
   const navigate = useNavigate();
-
-  const [dark, setDark] = useState(() => {
-    try { return localStorage.getItem("theme") === "dark"; } catch { return false; }
-  });
-
-  useEffect(() => {
-    const root = document.documentElement;
-    if (dark) {
-      root.classList.add("dark");
-      localStorage.setItem("theme", "dark");
-    } else {
-      root.classList.remove("dark");
-      localStorage.setItem("theme", "light");
-    }
-  }, [dark]);
 
   const signedInAs = useMemo(() => {
     try {
@@ -289,7 +275,7 @@ export default function App() {
 
       <div className={`mnav-wrap ${dark ? "dark-mode" : ""}`}>
         <Navbar isBordered maxWidth="xl" className="py-1" style={{ position: "relative" }}>
-
+          
           {/* Aurora glow layer (dark only) */}
           <div className="mnav-aurora" />
 
@@ -326,7 +312,7 @@ export default function App() {
             <NavbarItem>
               <button
                 className="mnav-theme-btn"
-                onClick={() => setDark((d) => !d)}
+                onClick={toggleDark}
                 title={dark ? "Switch to light mode" : "Switch to dark mode"}
               >
                 <FiSun className="mnav-theme-icon sun" size={16} />
