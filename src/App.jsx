@@ -2,8 +2,8 @@ import React from 'react';
 import { Button } from "@heroui/button";
 import { Spinner } from "@heroui/spinner";
 import { createBrowserRouter, RouterProvider, Navigate } from "react-router-dom";
-import MainLayout from './layouts/MainLayout';  // This path should be correct
-import AuthLayout from './layouts/AuthLayout';  // This path should be correct
+import MainLayout from './Layouts/MainLayout';
+import AuthLayout from './Layouts/AuthLayout';  // This path should be correct
 import NewFeed from "./Pages/NewFeed/NewFeed";
 import UserProfile from "./Pages/UserProfile/UserProfile";
 import NotFound from './Pages/NotFound/NotFound';
