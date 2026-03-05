@@ -1,5 +1,5 @@
 // src/components/Navbar/Navbar.jsx
-import React, { useContext, useMemo } from "react";
+import React, { useContext, useMemo, useState } from "react";
 import {
   Navbar,
   NavbarBrand,
@@ -14,20 +14,29 @@ import {
   Badge,
 } from "@heroui/react";
 import nextifylogo from "../../assets/images/nextifyLogo2.png";
-import { FiSearch, FiSun, FiMoon } from "react-icons/fi";
+import { FiSearch, FiSun, FiMoon, FiMenu, FiX } from "react-icons/fi";
 import { IoIosNotifications } from "react-icons/io";
 import userIcon from "../../assets/images/userIcon.png";
 import { LuMessageCircleMore } from "react-icons/lu";
+import { 
+  HiOutlineHome, 
+  HiOutlineUserGroup, 
+  HiOutlineBookmark, 
+  HiOutlineCog,
+  HiOutlineLogout 
+} from "react-icons/hi";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../../context/AuthContext";
 import { UserContext } from "../../context/UserContext";
 import { useTheme } from "../../context/ThemeContext"; // Import useTheme
+import { motion, AnimatePresence } from "framer-motion";
 
 export default function AppNavbar() {
   const { token, logout } = useContext(AuthContext);
   const { userData } = useContext(UserContext);
   const { dark, toggleDark } = useTheme(); // Use the theme context
   const navigate = useNavigate();
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const signedInAs = useMemo(() => {
     try {
@@ -39,6 +48,19 @@ export default function AppNavbar() {
       return payload?.email || payload?.username || payload?.userName || null;
     } catch (e) { return null; }
   }, [token]);
+
+  // Navigation items for mobile menu
+  const navItems = [
+    { key: "home", label: "Home", icon: HiOutlineHome, path: "/" },
+    { key: "profile", label: "My Profile", icon: HiOutlineUserGroup, path: "/profile" },
+    { key: "bookmarks", label: "Bookmarks", icon: HiOutlineBookmark, path: "/bookmarks" },
+    { key: "settings", label: "Settings", icon: HiOutlineCog, path: "/settings" },
+  ];
+
+  const handleNavigation = (path) => {
+    navigate(path);
+    setMobileMenuOpen(false);
+  };
 
   return (
     <>
@@ -121,7 +143,134 @@ export default function AppNavbar() {
           -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
         }
 
-        /* ── Search light ── */
+        /* Mobile menu button */
+        .mnav-mobile-btn {
+          width: 40px; height: 40px;
+          border-radius: 12px;
+          border: 1.5px solid #ebebf0;
+          background: #fafafa;
+          display: flex; align-items: center; justify-content: center;
+          cursor: pointer; color: #6b7280;
+          transition: all 0.2s;
+          margin-right: 8px;
+        }
+        .dark-mode .mnav-mobile-btn {
+          background: rgba(139,92,246,0.08);
+          border-color: rgba(139,92,246,0.2);
+          color: rgba(167,139,250,0.7);
+        }
+        .mnav-mobile-btn:hover {
+          background: #f0f0ff; border-color: rgba(99,102,241,0.3); color: #6366f1;
+        }
+        .dark-mode .mnav-mobile-btn:hover {
+          background: rgba(139,92,246,0.18);
+          border-color: rgba(167,139,250,0.5);
+          color: #c4b5fd;
+        }
+
+        /* Hide on larger screens */
+        @media (min-width: 768px) {
+          .mnav-mobile-btn {
+            display: none;
+          }
+        }
+
+        /* Mobile menu overlay */
+        .mnav-mobile-overlay {
+          position: fixed;
+          top: 64px;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          background: rgba(0, 0, 0, 0.5);
+          backdrop-filter: blur(4px);
+          z-index: 999;
+          display: none;
+        }
+        .dark-mode .mnav-mobile-overlay {
+          background: rgba(0, 0, 0, 0.7);
+        }
+        @media (max-width: 767px) {
+          .mnav-mobile-overlay.active {
+            display: block;
+          }
+        }
+
+        /* Mobile menu panel */
+        .mnav-mobile-panel {
+          position: fixed;
+          top: 64px;
+          left: -280px;
+          width: 280px;
+          height: calc(100vh - 64px);
+          background: white;
+          border-right: 1px solid #f0f0f5;
+          box-shadow: 4px 0 20px rgba(0, 0, 0, 0.1);
+          transition: left 0.3s ease;
+          z-index: 1000;
+          overflow-y: auto;
+          padding: 20px 0;
+        }
+        .dark-mode .mnav-mobile-panel {
+          background: linear-gradient(135deg, #0f0b1a 0%, #1a1428 100%);
+          border-right: 1px solid rgba(139,92,246,0.2);
+          box-shadow: 4px 0 30px rgba(139,92,246,0.2);
+        }
+        .mnav-mobile-panel.open {
+          left: 0;
+        }
+        @media (min-width: 768px) {
+          .mnav-mobile-panel {
+            display: none;
+          }
+        }
+
+        /* Mobile menu items */
+        .mnav-mobile-item {
+          display: flex;
+          align-items: center;
+          gap: 12px;
+          padding: 12px 24px;
+          color: #6b7280;
+          transition: all 0.2s;
+          cursor: pointer;
+          border-left: 3px solid transparent;
+        }
+        .dark-mode .mnav-mobile-item {
+          color: rgba(167,139,250,0.7);
+        }
+        .mnav-mobile-item:hover {
+          background: #f5f5ff;
+          color: #6366f1;
+          border-left-color: #6366f1;
+        }
+        .dark-mode .mnav-mobile-item:hover {
+          background: rgba(139,92,246,0.15);
+          color: #c4b5fd;
+          border-left-color: #c4b5fd;
+        }
+
+        .mnav-mobile-item.active {
+          background: #f0f0ff;
+          color: #6366f1;
+          border-left-color: #6366f1;
+        }
+        .dark-mode .mnav-mobile-item.active {
+          background: rgba(139,92,246,0.2);
+          color: #e9d5ff;
+          border-left-color: #e9d5ff;
+        }
+
+        .mnav-mobile-divider {
+          height: 1px;
+          background: #f0f0f5;
+          margin: 16px 0;
+        }
+        .dark-mode .mnav-mobile-divider {
+          background: rgba(139,92,246,0.2);
+        }
+
+        /* Search */
         .mnav-search [data-slot="input-wrapper"] {
           background: #f4f4f8 !important;
           border: 1.5px solid transparent !important;
@@ -279,6 +428,17 @@ export default function AppNavbar() {
           {/* Aurora glow layer (dark only) */}
           <div className="mnav-aurora" />
 
+          {/* Mobile Menu Button - Only visible on mobile */}
+          <NavbarItem className="block md:hidden">
+            <button
+              className="mnav-mobile-btn"
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              aria-label="Toggle menu"
+            >
+              {mobileMenuOpen ? <FiX size={20} /> : <FiMenu size={20} />}
+            </button>
+          </NavbarItem>
+
           {/* Brand */}
           <NavbarBrand className="mr-4 gap-2" style={{ position: "relative", zIndex: 1 }}>
             <img src={nextifylogo} alt="Nextify Logo" className="w-8 h-8 object-contain" />
@@ -374,6 +534,65 @@ export default function AppNavbar() {
 
           </NavbarContent>
         </Navbar>
+
+        {/* Mobile Menu Overlay */}
+        <div 
+          className={`mnav-mobile-overlay ${mobileMenuOpen ? 'active' : ''}`}
+          onClick={() => setMobileMenuOpen(false)}
+        />
+
+        {/* Mobile Menu Panel */}
+        <div className={`mnav-mobile-panel ${mobileMenuOpen ? 'open' : ''}`}>
+          {/* User info at top of mobile menu */}
+          <div className="px-6 py-4 mb-2">
+            <div className="flex items-center gap-3 mb-3">
+              <Avatar
+                src={userData?.user?.photo || userIcon}
+                className="w-12 h-12"
+                color="secondary"
+                isBordered
+              />
+              <div>
+                <p className={`font-semibold ${dark ? 'text-white' : 'text-gray-800'}`}>
+                  {userData?.user?.name || "User"}
+                </p>
+                <p className={`text-xs ${dark ? 'text-stone-400' : 'text-gray-500'}`}>
+                  {userData?.user?.email || "user@example.com"}
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div className="mnav-mobile-divider" />
+
+          {/* Navigation Items */}
+          {navItems.map((item) => (
+            <div
+              key={item.key}
+              className={`mnav-mobile-item ${
+                window.location.pathname === item.path ? 'active' : ''
+              }`}
+              onClick={() => handleNavigation(item.path)}
+            >
+              <item.icon size={20} />
+              <span>{item.label}</span>
+            </div>
+          ))}
+
+          <div className="mnav-mobile-divider" />
+
+          {/* Logout in mobile menu */}
+          <div
+            className="mnav-mobile-item text-red-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20"
+            onClick={() => {
+              logout();
+              setMobileMenuOpen(false);
+            }}
+          >
+            <HiOutlineLogout size={20} />
+            <span>Log Out</span>
+          </div>
+        </div>
       </div>
 
       {/* Spacer */}
